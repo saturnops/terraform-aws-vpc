@@ -1,0 +1,14 @@
+# AWS VARIABLES
+region      = ""
+
+# FOR ADDING TAGS ON ALL RESOURCES
+additional_tags = {
+  key1 = "value1"
+  key2 = "value2"
+}
+
+# VPC VARIABLES
+environment = ""   // Mandatory as used for tagging resources and appended to names.
+name        = ""   // Mandatory as used for tagging resources and appended to names. 
+vpc_cidr               = "172.10.0.0/16"
+public_subnets         = ["172.10.1.0/24", "172.10.2.0/24", "172.10.3.0/24"]

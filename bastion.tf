@@ -1,0 +1,256 @@
+data "aws_caller_identity" "current" {}
+
+resource "tls_private_key" "bastion" {
+  count     = var.bastion_host_enabled ? 1 : 0
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "local_file" "bastion_private_key" {
+  count           = var.bastion_host_enabled ? 1 : 0
+  content         = tls_private_key.bastion.0.private_key_pem
+  filename        = format("%s-%s-%s", var.environment, var.name, "bastion-key-pair.pem")
+  file_permission = "0600"
+}
+
+module "bastion_key_pair" {
+  count      = var.bastion_host_enabled ? 1 : 0
+  source     = "terraform-aws-modules/key-pair/aws"
+  version    = "0.6.0"
+  key_name   = format("%s-%s-%s", var.environment, var.name, "bastion-key-pair")
+  public_key = tls_private_key.bastion.0.public_key_openssh
+}
+
+resource "aws_eip" "bastion" {
+  count    = var.bastion_host_enabled ? 1 : 0
+  vpc      = true
+  instance = module.bastion_host.0.id[0]
+}
+
+module "security_group_bastion" {
+  count       = var.bastion_host_enabled && var.create_cis_vpc == false ? 1 : 0
+  source      = "terraform-aws-modules/security-group/aws"
+  version     = "~> 4"
+  create      = true
+  name        = format("%s-%s-%s", var.environment, var.name, "bastion-sg")
+  description = "bastion server security group"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress_with_cidr_blocks = [
+    {
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      description = "Public SSH access"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      description = "Public SSH access"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      description = "Public SSH access"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+
+  egress_with_cidr_blocks = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = "0.0.0.0/0"
+    },
+  ]
+
+  tags = tomap(
+    {
+      "Name"        = format("%s-%s-%s", var.environment, var.name, "bastion-sg")
+      "Environment" = var.environment
+    },
+  )
+}
+
+data "aws_ami" "ubuntu_18_ami" {
+  count       = var.bastion_host_enabled ? 1 : 0
+  owners      = ["099720109477"]
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+data "template_file" "pritunl" {
+  count = var.bastion_host_enabled ? 1 : 0
+  template = file("${path.module}/scripts/pritunl-vpn.sh")
+}
+
+locals {
+  user_data = <<EOF
+#!/bin/bash
+echo "bootstrapping Bastion Server"
+EOF
+}
+
+module "bastion_host" {
+  count                       = var.bastion_host_enabled ? 1 : 0
+  source                      = "terraform-aws-modules/ec2-instance/aws"
+  version                     = "2.17.0"
+  name                        = format("%s-%s-%s", var.environment, var.name, "bastion-ec2-instance")
+  instance_count              = 1
+  ami                         = data.aws_ami.ubuntu_18_ami.0.image_id
+  instance_type               = var.bastion_host_instance_type
+  subnet_ids                  = module.vpc.public_subnets
+  key_name                    = module.bastion_key_pair.0.this_key_pair_key_name
+  associate_public_ip_address = true
+  vpc_security_group_ids      = var.create_cis_vpc ? [module.security_group_bastion_cis.0.security_group_id] : [module.security_group_bastion.0.security_group_id]
+  user_data                   = join("", data.template_file.pritunl.*.rendered)
+  iam_instance_profile        = join("",aws_iam_instance_profile.bastion_SSM.*.name)
+
+  root_block_device = [
+    {
+      encrypted   = true
+      volume_type = "gp2"
+      volume_size = 20
+    }
+  ]
+
+  tags = tomap(
+    {
+      "Name"        = format("%s-%s-%s", var.environment, var.name, "bastion-ec2-instance")
+      "Environment" = var.environment
+    },
+  )
+}
+
+resource "aws_iam_role" "bastion_role" {
+  count              = var.bastion_host_enabled ? 1 : 0
+  name               = format("%s-%s-%s", var.environment, var.name, "bastionEC2InstanceRole")
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": [
+          "ec2.amazonaws.com"
+        ]
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+data "aws_iam_policy" "SSMManagedInstanceCore" {
+  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_role_policy_attachment" "SSMManagedInstanceCore_attachment" {
+  count      = var.bastion_host_enabled ? 1 : 0
+  role       = join("",aws_iam_role.bastion_role.*.name)
+  policy_arn = data.aws_iam_policy.SSMManagedInstanceCore.arn
+}
+
+resource "aws_iam_instance_profile" "bastion_SSM" {
+  count = var.bastion_host_enabled ? 1 : 0
+  name = format("%s-%s-%s", var.environment, var.name, "bastionEC2InstanceProfile")
+  role = join("",aws_iam_role.bastion_role.*.name)
+}
+
+module "security_group_bastion_cis" {
+  count       = var.bastion_host_enabled && var.create_cis_vpc ? 1 : 0
+  source      = "terraform-aws-modules/security-group/aws"
+  version     = "~> 4"
+  create      = true
+  name        = format("%s-%s-%s", var.environment, var.name, "bastion-sg")
+  description = "bastion server security group"
+  vpc_id      = module.vpc.vpc_id
+
+  egress_with_cidr_blocks = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = "0.0.0.0/0"
+    },
+  ]
+
+  tags = tomap(
+    {
+      "Name"        = format("%s-%s-%s", var.environment, var.name, "bastion-sg")
+      "Environment" = var.environment
+      "CIS-Compliant" = "True"
+    },
+  )
+}
+
+data "aws_iam_policy" "AmazonEC2RoleforSSM" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+}
+
+resource "aws_iam_role_policy_attachment" "AmazonEC2RoleforSSM_attachment" {
+  count      = var.bastion_host_enabled ? 1 : 0
+  role       = join("",aws_iam_role.bastion_role.*.name)
+  policy_arn = data.aws_iam_policy.AmazonEC2RoleforSSM.arn
+}
+
+resource "time_sleep" "wait_2_min" {
+  count = var.bastion_host_enabled ? 1 : 0
+  depends_on = [module.bastion_host]
+  create_duration = "2m"
+}
+
+resource "null_resource" "run_ssm_command" {
+  count = var.bastion_host_enabled ? 1 : 0
+  depends_on = [time_sleep.wait_2_min]
+  provisioner "local-exec" {
+    command = "aws ssm send-command --instance-ids '${join("",module.bastion_host[0].id)}'  --region ${var.region} --document-name 'AWS-RunShellScript' --parameters commands=['sudo pritunl setup-key','sudo pritunl default-password']"
+  }
+}
+
+resource "time_sleep" "wait_30_sec" {
+  count = var.bastion_host_enabled ? 1 : 0
+  depends_on = [null_resource.run_ssm_command]
+  create_duration = "30s"
+}
+
+resource "null_resource" "key_file" {
+  count = var.bastion_host_enabled ? 1 : 0
+  depends_on = [null_resource.run_ssm_command]
+  provisioner "local-exec" {
+    command = "echo Keys:   >> pritunl/pritunl-info.txt"
+  }
+}
+
+resource "null_resource" "get_ssm_output" {
+  count = var.bastion_host_enabled ? 1 : 0
+  depends_on = [time_sleep.wait_30_sec]
+  provisioner "local-exec" {
+    command = "aws ssm list-command-invocations --region ${var.region}  --instance-id '${join("",module.bastion_host[0].id)}' --details | jq --raw-output '.CommandInvocations[].CommandPlugins[].Output' >> pritunl/pritunl-info.txt"
+  }
+}
+
+resource "null_resource" "pritunl_file" {
+  count = var.bastion_host_enabled ? 1 : 0
+  depends_on = [null_resource.get_ssm_output]
+  provisioner "local-exec" {
+    command = "sed -i '3d' pritunl/pritunl-info.txt"
+  }
+}
