@@ -6,9 +6,9 @@ module "vpc" {
   name                                            = format("%s-%s-vpc", var.environment, var.name)
   cidr                                            = var.vpc_cidr # CIDR FOR VPC
   azs                                             = data.aws_availability_zones.available.names
-  public_subnets                                  = var.public_subnets                                                                                                           # CIDR FOR PUBLIC SUBNETS
-  private_subnets                                 = length(var.private_subnets) > 0 ? var.private_subnets : (length(var.application_subnets) > 0 ? var.application_subnets : []) # CIDR FOR PRIVATE SUBNETS
-  database_subnets                                = var.database_subnets
+  public_subnets                                  = [for netnum in range(0, 3) : cidrsubnet(var.vpc_cidr, 4, netnum)]
+  private_subnets                                 = [for netnum in range(3, 6) : cidrsubnet(var.vpc_cidr, 4, netnum)]
+  database_subnets                                = [for netnum in range(6, 9) : cidrsubnet(var.vpc_cidr, 4, netnum)]
   create_database_subnet_route_table              = var.create_database_subnet_route_table
   create_database_nat_gateway_route               = var.create_database_nat_gateway_route
   enable_nat_gateway                              = var.enable_nat_gateway

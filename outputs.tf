@@ -12,19 +12,19 @@ output "_3_vpc_cidr_block" {
 }
 
 output "_4_public_subnets" {
-  value = length(var.public_subnets) > 0 ? module.vpc.public_subnets : null
+  value = module.vpc.public_subnets
 }
 
 output "_4_private_subnets" {
-  value = length(var.private_subnets) > 0 ? module.vpc.private_subnets : null
+  value = module.vpc.private_subnets
 }
 
 output "_5_application_subnets" {
-  value = length(var.application_subnets) > 0 ? module.vpc.private_subnets : null
+  value = module.vpc.private_subnets
 }
 
 output "_6_database_subnets" {
-  value = length(var.database_subnets) > 0 ? module.vpc.database_subnets : null
+  value = module.vpc.database_subnets
 }
 
 output "_7_vpn-host-public-ip" {
