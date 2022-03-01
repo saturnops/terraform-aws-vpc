@@ -27,25 +27,25 @@ output "_6_database_subnets" {
   value = length(var.database_subnets) > 0 ? module.vpc.database_subnets : null
 }
 
-output "_7_bastion-host-public-ip" {
-  value = var.bastion_host_enabled ? aws_eip.bastion.0.public_ip : null
+output "_7_vpn-host-public-ip" {
+  value = var.vpn_server_enabled ? aws_eip.vpn.0.public_ip : null
 }
 
 output "_9_local_file" {
   description = "Path of pem file"
-  value       = var.bastion_host_enabled ? format("%s-%s-%s-%s", path.module, var.environment, var.name, "bastion-key-pair.pem") : null
+  value       = var.vpn_server_enabled ? format("%s-%s-%s-%s", path.module, var.environment, var.name, "vpn-key-pair.pem") : null
 }
 
-output "_8_bastion_host_info_pem" {
-  value = var.bastion_host_enabled ? "SAVE THIS FILE AS .pem FOR ACCESSING BASTION HOST" : null
+output "_8_vpn_server_info_pem" {
+  value = var.vpn_server_enabled ? "SAVE THIS FILE AS .pem FOR ACCESSING vpn HOST" : null
 }
 
-output "bastion_host_pem_file" {
+output "vpn_server_pem_file" {
   description = "Warning!! ! Please Save this for future use !"
-  value       = var.bastion_host_enabled ? nonsensitive(tls_private_key.bastion.0.private_key_pem) : null
+  value       = var.vpn_server_enabled ? nonsensitive(tls_private_key.vpn.0.private_key_pem) : null
 }
 
 output "pritunl_info" {
-  value       = var.bastion_host_enabled ? "Please check the Pritunl keys and login credentials in 'pritunl-info.txt' file in 'pritunl' folder" : "Bastion host is not enabled therefore pritunl not installed" 
+  value       = var.vpn_server_enabled ? "Please check the Pritunl keys and login credentials in 'pritunl-info.txt' file in 'pritunl' folder" : "vpn host is not enabled therefore pritunl not installed" 
 }
 

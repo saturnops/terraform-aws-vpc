@@ -11,12 +11,12 @@ variable "application_subnets" {
   type    = list(any)
 }
 
-variable "bastion_host_enabled" {
+variable "vpn_server_enabled" {
   default = false
   type    = bool
 }
 
-variable "bastion_host_instance_type" {
+variable "vpn_server_instance_type" {
   default = "t3a.small"
   type    = string
 }

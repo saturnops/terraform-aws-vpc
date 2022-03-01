@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "bootstrapping Bastion Server with Pritunl"
+echo "bootstrapping vpn Server with Pritunl"
 sudo apt update
 echo "deb http://repo.pritunl.com/stable/apt bionic main" | sudo tee /etc/apt/sources.list.d/pritunl.list
 sudo touch /etc/apt/sources.list.d/mongodb-org-4.0.list

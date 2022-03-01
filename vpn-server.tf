@@ -1,39 +1,39 @@
 data "aws_caller_identity" "current" {}
 
-resource "tls_private_key" "bastion" {
-  count     = var.bastion_host_enabled ? 1 : 0
+resource "tls_private_key" "vpn" {
+  count     = var.vpn_server_enabled ? 1 : 0
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-resource "local_file" "bastion_private_key" {
-  count           = var.bastion_host_enabled ? 1 : 0
-  content         = tls_private_key.bastion.0.private_key_pem
-  filename        = format("%s-%s-%s", var.environment, var.name, "bastion-key-pair.pem")
+resource "local_file" "vpn_private_key" {
+  count           = var.vpn_server_enabled ? 1 : 0
+  content         = tls_private_key.vpn.0.private_key_pem
+  filename        = format("%s-%s-%s", var.environment, var.name, "vpn-key-pair.pem")
   file_permission = "0600"
 }
 
-module "bastion_key_pair" {
-  count      = var.bastion_host_enabled ? 1 : 0
+module "vpn_key_pair" {
+  count      = var.vpn_server_enabled ? 1 : 0
   source     = "terraform-aws-modules/key-pair/aws"
   version    = "0.6.0"
-  key_name   = format("%s-%s-%s", var.environment, var.name, "bastion-key-pair")
-  public_key = tls_private_key.bastion.0.public_key_openssh
+  key_name   = format("%s-%s-%s", var.environment, var.name, "vpn-key-pair")
+  public_key = tls_private_key.vpn.0.public_key_openssh
 }
 
-resource "aws_eip" "bastion" {
-  count    = var.bastion_host_enabled ? 1 : 0
+resource "aws_eip" "vpn" {
+  count    = var.vpn_server_enabled ? 1 : 0
   vpc      = true
-  instance = module.bastion_host.0.id[0]
+  instance = module.vpn_server.0.id[0]
 }
 
-module "security_group_bastion" {
-  count       = var.bastion_host_enabled && var.create_cis_vpc == false ? 1 : 0
+module "security_group_vpn" {
+  count       = var.vpn_server_enabled && var.create_cis_vpc == false ? 1 : 0
   source      = "terraform-aws-modules/security-group/aws"
   version     = "~> 4"
   create      = true
-  name        = format("%s-%s-%s", var.environment, var.name, "bastion-sg")
-  description = "bastion server security group"
+  name        = format("%s-%s-%s", var.environment, var.name, "vpn-sg")
+  description = "vpn server security group"
   vpc_id      = module.vpc.vpc_id
 
   ingress_with_cidr_blocks = [
@@ -71,14 +71,14 @@ module "security_group_bastion" {
 
   tags = tomap(
     {
-      "Name"        = format("%s-%s-%s", var.environment, var.name, "bastion-sg")
+      "Name"        = format("%s-%s-%s", var.environment, var.name, "vpn-sg")
       "Environment" = var.environment
     },
   )
 }
 
 data "aws_ami" "ubuntu_18_ami" {
-  count       = var.bastion_host_enabled ? 1 : 0
+  count       = var.vpn_server_enabled ? 1 : 0
   owners      = ["099720109477"]
   most_recent = true
 
@@ -94,31 +94,31 @@ data "aws_ami" "ubuntu_18_ami" {
 }
 
 data "template_file" "pritunl" {
-  count = var.bastion_host_enabled ? 1 : 0
+  count = var.vpn_server_enabled ? 1 : 0
   template = file("${path.module}/scripts/pritunl-vpn.sh")
 }
 
 locals {
   user_data = <<EOF
 #!/bin/bash
-echo "bootstrapping Bastion Server"
+echo "bootstrapping vpn Server"
 EOF
 }
 
-module "bastion_host" {
-  count                       = var.bastion_host_enabled ? 1 : 0
+module "vpn_server" {
+  count                       = var.vpn_server_enabled ? 1 : 0
   source                      = "terraform-aws-modules/ec2-instance/aws"
   version                     = "2.17.0"
-  name                        = format("%s-%s-%s", var.environment, var.name, "bastion-ec2-instance")
+  name                        = format("%s-%s-%s", var.environment, var.name, "vpn-ec2-instance")
   instance_count              = 1
   ami                         = data.aws_ami.ubuntu_18_ami.0.image_id
-  instance_type               = var.bastion_host_instance_type
+  instance_type               = var.vpn_server_instance_type
   subnet_ids                  = module.vpc.public_subnets
-  key_name                    = module.bastion_key_pair.0.this_key_pair_key_name
+  key_name                    = module.vpn_key_pair.0.this_key_pair_key_name
   associate_public_ip_address = true
-  vpc_security_group_ids      = var.create_cis_vpc ? [module.security_group_bastion_cis.0.security_group_id] : [module.security_group_bastion.0.security_group_id]
+  vpc_security_group_ids      = var.create_cis_vpc ? [module.security_group_vpn_cis.0.security_group_id] : [module.security_group_vpn.0.security_group_id]
   user_data                   = join("", data.template_file.pritunl.*.rendered)
-  iam_instance_profile        = join("",aws_iam_instance_profile.bastion_SSM.*.name)
+  iam_instance_profile        = join("",aws_iam_instance_profile.vpn_SSM.*.name)
 
   root_block_device = [
     {
@@ -130,15 +130,15 @@ module "bastion_host" {
 
   tags = tomap(
     {
-      "Name"        = format("%s-%s-%s", var.environment, var.name, "bastion-ec2-instance")
+      "Name"        = format("%s-%s-%s", var.environment, var.name, "vpn-ec2-instance")
       "Environment" = var.environment
     },
   )
 }
 
-resource "aws_iam_role" "bastion_role" {
-  count              = var.bastion_host_enabled ? 1 : 0
-  name               = format("%s-%s-%s", var.environment, var.name, "bastionEC2InstanceRole")
+resource "aws_iam_role" "vpn_role" {
+  count              = var.vpn_server_enabled ? 1 : 0
+  name               = format("%s-%s-%s", var.environment, var.name, "vpnEC2InstanceRole")
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -163,24 +163,24 @@ data "aws_iam_policy" "SSMManagedInstanceCore" {
 }
 
 resource "aws_iam_role_policy_attachment" "SSMManagedInstanceCore_attachment" {
-  count      = var.bastion_host_enabled ? 1 : 0
-  role       = join("",aws_iam_role.bastion_role.*.name)
+  count      = var.vpn_server_enabled ? 1 : 0
+  role       = join("",aws_iam_role.vpn_role.*.name)
   policy_arn = data.aws_iam_policy.SSMManagedInstanceCore.arn
 }
 
-resource "aws_iam_instance_profile" "bastion_SSM" {
-  count = var.bastion_host_enabled ? 1 : 0
-  name = format("%s-%s-%s", var.environment, var.name, "bastionEC2InstanceProfile")
-  role = join("",aws_iam_role.bastion_role.*.name)
+resource "aws_iam_instance_profile" "vpn_SSM" {
+  count = var.vpn_server_enabled ? 1 : 0
+  name = format("%s-%s-%s", var.environment, var.name, "vpnEC2InstanceProfile")
+  role = join("",aws_iam_role.vpn_role.*.name)
 }
 
-module "security_group_bastion_cis" {
-  count       = var.bastion_host_enabled && var.create_cis_vpc ? 1 : 0
+module "security_group_vpn_cis" {
+  count       = var.vpn_server_enabled && var.create_cis_vpc ? 1 : 0
   source      = "terraform-aws-modules/security-group/aws"
   version     = "~> 4"
   create      = true
-  name        = format("%s-%s-%s", var.environment, var.name, "bastion-sg")
-  description = "bastion server security group"
+  name        = format("%s-%s-%s", var.environment, var.name, "vpn-sg")
+  description = "vpn server security group"
   vpc_id      = module.vpc.vpc_id
 
   egress_with_cidr_blocks = [
@@ -194,7 +194,7 @@ module "security_group_bastion_cis" {
 
   tags = tomap(
     {
-      "Name"        = format("%s-%s-%s", var.environment, var.name, "bastion-sg")
+      "Name"        = format("%s-%s-%s", var.environment, var.name, "vpn-sg")
       "Environment" = var.environment
       "CIS-Compliant" = "True"
     },
@@ -206,33 +206,33 @@ data "aws_iam_policy" "AmazonEC2RoleforSSM" {
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEC2RoleforSSM_attachment" {
-  count      = var.bastion_host_enabled ? 1 : 0
-  role       = join("",aws_iam_role.bastion_role.*.name)
+  count      = var.vpn_server_enabled ? 1 : 0
+  role       = join("",aws_iam_role.vpn_role.*.name)
   policy_arn = data.aws_iam_policy.AmazonEC2RoleforSSM.arn
 }
 
 resource "time_sleep" "wait_2_min" {
-  count = var.bastion_host_enabled ? 1 : 0
-  depends_on = [module.bastion_host]
+  count = var.vpn_server_enabled ? 1 : 0
+  depends_on = [module.vpn_server]
   create_duration = "2m"
 }
 
 resource "null_resource" "run_ssm_command" {
-  count = var.bastion_host_enabled ? 1 : 0
+  count = var.vpn_server_enabled ? 1 : 0
   depends_on = [time_sleep.wait_2_min]
   provisioner "local-exec" {
-    command = "aws ssm send-command --instance-ids '${join("",module.bastion_host[0].id)}'  --region ${var.region} --document-name 'AWS-RunShellScript' --parameters commands=['sudo pritunl setup-key','sudo pritunl default-password']"
+    command = "aws ssm send-command --instance-ids '${join("",module.vpn_server[0].id)}'  --region ${var.region} --document-name 'AWS-RunShellScript' --parameters commands=['sudo pritunl setup-key','sudo pritunl default-password']"
   }
 }
 
 resource "time_sleep" "wait_30_sec" {
-  count = var.bastion_host_enabled ? 1 : 0
+  count = var.vpn_server_enabled ? 1 : 0
   depends_on = [null_resource.run_ssm_command]
   create_duration = "30s"
 }
 
 resource "null_resource" "key_file" {
-  count = var.bastion_host_enabled ? 1 : 0
+  count = var.vpn_server_enabled ? 1 : 0
   depends_on = [null_resource.run_ssm_command]
   provisioner "local-exec" {
     command = "echo Keys:   >> pritunl/pritunl-info.txt"
@@ -240,15 +240,15 @@ resource "null_resource" "key_file" {
 }
 
 resource "null_resource" "get_ssm_output" {
-  count = var.bastion_host_enabled ? 1 : 0
+  count = var.vpn_server_enabled ? 1 : 0
   depends_on = [time_sleep.wait_30_sec]
   provisioner "local-exec" {
-    command = "aws ssm list-command-invocations --region ${var.region}  --instance-id '${join("",module.bastion_host[0].id)}' --details | jq --raw-output '.CommandInvocations[].CommandPlugins[].Output' >> pritunl/pritunl-info.txt"
+    command = "aws ssm list-command-invocations --region ${var.region}  --instance-id '${join("",module.vpn_server[0].id)}' --details | jq --raw-output '.CommandInvocations[].CommandPlugins[].Output' >> pritunl/pritunl-info.txt"
   }
 }
 
 resource "null_resource" "pritunl_file" {
-  count = var.bastion_host_enabled ? 1 : 0
+  count = var.vpn_server_enabled ? 1 : 0
   depends_on = [null_resource.get_ssm_output]
   provisioner "local-exec" {
     command = "sed -i '3d' pritunl/pritunl-info.txt"
