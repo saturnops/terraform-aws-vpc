@@ -1,4 +1,3 @@
-# Ignore file terraform.tfstate and terraform.tfstate.backup
 *.tfstate
 *.tfstate.*
 .terraform*
@@ -6,3 +5,4 @@
 *.lock
 *.tfvars
 *.pem
+vars
