@@ -2,15 +2,66 @@
 
 Terraform module which creates Network resources on AWS.
 
-- Used to create a VPC with public and private subnets. 
-- Also creates a vpn host with 30GB EBS volume and it's security group with the following rules:
+## Usage Example
 
-        i. ingress rule for port 22 from 0.0.0.0/0
-        ii. egress rule for all ports from 0.0.0.0/0
+```hcl
+module "vpc" {
+  source = "git::https://{GIT_USER}:{GIT_TOKEN}@gitlab.com/saturnops/sal/terraform/aws/network.git?ref=dev"
 
-- This module also creates a NAT gateway and attaches it to the VPC. Capable of provisioning NAT gateway per AZ also. 
+  environment                                     = var.environment
+  name                                            = var.name
+  region                                          = var.region
+  additional_tags                                 = var.additional_tags
+  vpc_cidr                                        = var.vpc_cidr
+  public_subnets                                  = var.public_subnets
+}
 
-- ***.pem*** file for vpn host is saved in the root of 02-network module.
+```
+## Network Scenarios
+
+This module supports three scenarios for creating Network resource on AWS. Each will be explained in further detail in the corresponding sections.
+
+- **vpc_minimal (default behavior):** For creating a VPC with only public subnets and IGW.
+  - `vpc_cidr       = ""`
+  - `public_subnets = []`
+- **vpc_secure:** For creating a VPC with both public and private subnets and IGW and NAT gateway. Jump server/Bastion Host is also configured.
+  - `public_subnets                    = []`  
+  - `private_subnets                   = []`     
+  - `enable_nat_gateway                = true`
+  - `single_nat_gateway                = true`
+  - `one_nat_gateway_per_az            = false`
+  - `vpn_host_enabled                  = true`
+  - `vpn_host_instance_type            = "t3a.small"`
+  - `enable_flow_log                   = false`
+  - `flow_log_max_aggregation_interval = 60`
+  - `flow_log_cloudwatch_log_group_retention_in_days = 90`
+
+- **vpc_three_tier:** For creating a VPC with public, private and database subnets ( where app and database subnets are private subnets)along with an IGW and NAT gateway. Jump server/Bastion Host is also configured.
+  - `public_subnets         = []`  
+  - `private_subnets        = []`  
+  - `database_subnets       = []`
+  - `create_database_subnet_route_table    = true`
+  - `create_database_nat_gateway_route     = true`
+  - `create_cis_vpc         = true`
+
+## NAT Gateway Scenarios
+
+This module supports three scenarios for creating NAT gateways. Each will be explained in further detail in the corresponding sections.
+
+- One NAT Gateway per subnet (default behavior)
+  - `enable_nat_gateway     = true`
+  - `single_nat_gateway     = false`
+  - `one_nat_gateway_per_az = false`
+- Single NAT Gateway
+  - `enable_nat_gateway     = true`
+  - `single_nat_gateway     = true`
+  - `one_nat_gateway_per_az = false`
+- One NAT Gateway per availability zone
+  - `enable_nat_gateway     = true`
+  - `single_nat_gateway     = false`
+  - `one_nat_gateway_per_az = true`
+
+If both `single_nat_gateway` and `one_nat_gateway_per_az` are set to `true`, then `single_nat_gateway` takes precedence.
 
 - To create ***CIS compliant VPC*** set the variable ***create_cis_vpc*** to ***true*** in the .tfvars file.
 
@@ -32,25 +83,6 @@ server administration ports (Automated)
 server administration ports (Automated)
 
 (Automated)
-
-## NAT Gateway Scenarios
-
-This module supports three scenarios for creating NAT gateways. Each will be explained in further detail in the corresponding sections.
-
-- One NAT Gateway per subnet (default behavior)
-  - `enable_nat_gateway = true`
-  - `single_nat_gateway = false`
-  - `one_nat_gateway_per_az = false`
-- Single NAT Gateway
-  - `enable_nat_gateway = true`
-  - `single_nat_gateway = true`
-  - `one_nat_gateway_per_az = false`
-- One NAT Gateway per availability zone
-  - `enable_nat_gateway = true`
-  - `single_nat_gateway = false`
-  - `one_nat_gateway_per_az = true`
-
-If both `single_nat_gateway` and `one_nat_gateway_per_az` are set to `true`, then `single_nat_gateway` takes precedence.
 
 
 <!-- BEGIN_TF_DOCS -->
