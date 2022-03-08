@@ -1,14 +1,21 @@
 data "aws_region" "current" {}
 data "aws_availability_zones" "available" {}
+
+locals {
+    public_subnet=var.enable_public_subnet ? length(var.public_subnets) > 0 ? var.public_subnets : [for netnum in range(0, 3) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
+    private_subnet=var.enable_private_subnet ? length(var.private_subnets) > 0 ? var.private_subnets : [for netnum in range(3, 6) : cidrsubnet(var.vpc_cidr, 3, netnum)] : []
+    database_subnet=var.enable_database_subnet ? length(var.database_subnets) > 0 ? var.database_subnets : [for netnum in range(6, 9) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
+}
+
 module "vpc" {
   source                                          = "terraform-aws-modules/vpc/aws"
   version                                         = "2.77.0"
   name                                            = format("%s-%s-vpc", var.environment, var.name)
   cidr                                            = var.vpc_cidr # CIDR FOR VPC
   azs                                             = data.aws_availability_zones.available.names
-  public_subnets                                  = [for netnum in range(0, 3) : cidrsubnet(var.vpc_cidr, 4, netnum)]
-  private_subnets                                 = [for netnum in range(3, 6) : cidrsubnet(var.vpc_cidr, 4, netnum)]
-  database_subnets                                = [for netnum in range(6, 9) : cidrsubnet(var.vpc_cidr, 4, netnum)]
+  public_subnets                                  = local.public_subnet 
+  private_subnets                                 = local.private_subnet 
+  database_subnets                                = local.database_subnet 
   create_database_subnet_route_table              = var.create_database_subnet_route_table
   create_database_nat_gateway_route               = var.create_database_nat_gateway_route
   enable_nat_gateway                              = var.enable_nat_gateway

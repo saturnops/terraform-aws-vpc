@@ -19,10 +19,6 @@ output "_4_private_subnets" {
   value = module.vpc.private_subnets
 }
 
-output "_5_application_subnets" {
-  value = module.vpc.private_subnets
-}
-
 output "_6_database_subnets" {
   value = module.vpc.database_subnets
 }

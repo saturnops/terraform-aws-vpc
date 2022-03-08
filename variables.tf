@@ -226,3 +226,17 @@ variable "default_security_group_ingress_cis" {
   default     = []
 }
 
+variable "enable_public_subnet" {
+  default = false
+  type    = bool
+}
+
+variable "enable_private_subnet" {
+  default = false
+  type    = bool
+}
+
+variable "enable_database_subnet" {
+  default = false
+  type    = bool
+}
