@@ -23,11 +23,6 @@ output "_4_private_subnets" {
   value = length(var.private_subnets) > 0 ? module.vpc.private_subnets : null
 }
 
-output "_5_application_subnets" {
-  description = "List of IDs of application subnets"
-  value = length(var.application_subnets) > 0 ? module.vpc.private_subnets : null
-}
-
 output "_6_database_subnets" {
   description = "List of IDs of database subnets"
   value = length(var.database_subnets) > 0 ? module.vpc.database_subnets : null
