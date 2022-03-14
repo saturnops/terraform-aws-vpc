@@ -5,6 +5,7 @@ locals {
     public_subnet=var.enable_public_subnet ? length(var.public_subnets) > 0 ? var.public_subnets : [for netnum in range(0, 3) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
     private_subnet=var.enable_private_subnet ? length(var.private_subnets) > 0 ? var.private_subnets : [for netnum in range(3, 6) : cidrsubnet(var.vpc_cidr, 3, netnum)] : []
     database_subnet=var.enable_database_subnet ? length(var.database_subnets) > 0 ? var.database_subnets : [for netnum in range(6, 9) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
+    intra_subnet=var.enable_intra_subnet ? length(var.intra_subnets) > 0 ? var.intra_subnets : [for netnum in range(6, 9) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
 }
 
 module "vpc" {
@@ -16,7 +17,7 @@ module "vpc" {
   public_subnets                                  = local.public_subnet 
   private_subnets                                 = local.private_subnet 
   database_subnets                                = local.database_subnet
-  intra_subnets                                   = [for netnum in range(0, 3) : cidrsubnet(var.vpc_cidr, 8, netnum)] 
+  intra_subnets                                   = local.intra_subnet 
   create_database_subnet_route_table              = var.create_database_subnet_route_table
   create_database_nat_gateway_route               = var.create_database_nat_gateway_route
   enable_nat_gateway                              = var.enable_nat_gateway
