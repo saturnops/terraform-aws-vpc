@@ -28,6 +28,11 @@ output "_6_database_subnets" {
   value = length(module.vpc.database_subnets) > 0 ? module.vpc.database_subnets : null
 }
 
+output "intra_subnets" {
+  value = length(module.vpc.intra_subnets) > 0 ? module.vpc.intra_subnets : null
+
+}
+
 output "_7_vpn-host-public-ip" {
   description = "IP Adress of VPN Server"
   value = var.vpn_server_enabled ? aws_eip.vpn.0.public_ip : null

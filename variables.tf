@@ -125,7 +125,7 @@ variable "flow_log_cloudwatch_log_group_retention_in_days" {
 variable "flow_log_max_aggregation_interval" {
   description = "The maximum interval of time during which a flow of packets is captured and aggregated into a flow log record. Valid Values: `60` seconds or `600` seconds."
   type        = number
-  default     = 600
+  default     = 60
 }
 
 variable "manage_default_security_group" {
@@ -239,4 +239,14 @@ variable "enable_private_subnet" {
 variable "enable_database_subnet" {
   default = false
   type    = bool
+}
+
+variable "enable_intra_subnet" {
+  default = false
+  type    = bool
+}
+
+variable "intra_subnets" {
+  default = []
+  type    = list(any)
 }

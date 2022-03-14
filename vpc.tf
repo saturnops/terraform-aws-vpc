@@ -15,7 +15,8 @@ module "vpc" {
   azs                                             = data.aws_availability_zones.available.names
   public_subnets                                  = local.public_subnet 
   private_subnets                                 = local.private_subnet 
-  database_subnets                                = local.database_subnet 
+  database_subnets                                = local.database_subnet
+  intra_subnets                                   = [for netnum in range(0, 3) : cidrsubnet(var.vpc_cidr, 8, netnum)] 
   create_database_subnet_route_table              = var.create_database_subnet_route_table
   create_database_nat_gateway_route               = var.create_database_nat_gateway_route
   enable_nat_gateway                              = var.enable_nat_gateway
