@@ -5,7 +5,7 @@ locals {
     public_subnet=var.enable_public_subnet ? length(var.public_subnets) > 0 ? var.public_subnets : [for netnum in range(0, 3) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
     private_subnet=var.enable_private_subnet ? length(var.private_subnets) > 0 ? var.private_subnets : [for netnum in range(3, 6) : cidrsubnet(var.vpc_cidr, 3, netnum)] : []
     database_subnet=var.enable_database_subnet ? length(var.database_subnets) > 0 ? var.database_subnets : [for netnum in range(6, 9) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
-    intra_subnet=var.enable_intra_subnet ? length(var.intra_subnets) > 0 ? var.intra_subnets : [for netnum in range(6, 9) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
+    intra_subnet=var.enable_intra_subnet ? length(var.intra_subnets) > 0 ? var.intra_subnets : [for netnum in range(9, 12) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
 }
 
 module "vpc" {
