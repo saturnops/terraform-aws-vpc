@@ -250,3 +250,8 @@ variable "intra_subnets" {
   default = []
   type    = list(any)
 }
+
+variable "public_key_vpn" {
+  default = ""
+  type    = string
+}

@@ -114,7 +114,7 @@ module "vpn_server" {
   ami                         = data.aws_ami.ubuntu_18_ami.0.image_id
   instance_type               = var.vpn_server_instance_type
   subnet_ids                  = module.vpc.public_subnets
-  key_name                    = module.vpn_key_pair.0.this_key_pair_key_name
+  key_name                    = var.public_key_vpn
   associate_public_ip_address = true
   vpc_security_group_ids      = var.create_cis_vpc ? [module.security_group_vpn_cis.0.security_group_id] : [module.security_group_vpn.0.security_group_id]
   user_data                   = join("", data.template_file.pritunl.*.rendered)
