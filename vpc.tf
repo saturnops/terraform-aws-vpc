@@ -20,7 +20,7 @@ module "vpc" {
   intra_subnets                                   = local.intra_subnet 
   create_database_subnet_route_table              = var.create_database_subnet_route_table
   create_database_nat_gateway_route               = var.create_database_nat_gateway_route
-  enable_nat_gateway                              = var.enable_nat_gateway
+  enable_nat_gateway                              = length(local.private_subnet) > 0 ? true : false
   single_nat_gateway                              = var.single_nat_gateway
   one_nat_gateway_per_az                          = var.one_nat_gateway_per_az
   enable_dns_hostnames                            = true

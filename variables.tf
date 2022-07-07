@@ -7,16 +7,19 @@ variable "additional_tags" {
 }
 
 variable "application_subnets" {
+  description = "Application Tier subnet IDs"
   default = []
   type    = list(any)
 }
 
 variable "vpn_server_enabled" {
+  description = "Set to true if you want to deploy VPN Gateway resource and attach it to the VPC"
   default = false
   type    = bool
 }
 
 variable "vpn_server_instance_type" {
+  description = "EC2 instance Type for VPN Server"
   default = "t3a.small"
   type    = string
 }
@@ -58,6 +61,7 @@ variable "default_network_acl_ingress" {
 }
 
 variable "database_subnets" {
+  description = "Database Tier subnet IDs"
   default = []
   type    = list(any)
 }
@@ -106,12 +110,14 @@ variable "enable_flow_log" {
   default     = false
 }
 
-variable "enable_nat_gateway" {
-  default = false
-  type    = bool
-}
+#variable "enable_nat_gateway" {
+#  description = "Set to true if you want to provision NAT Gateway"
+#  default = false
+#  type    = bool
+#}
 
 variable "environment" {
+  description = "Specify the environment indentifier for the VPC"
   default = ""
   type    = string
 }
@@ -129,47 +135,56 @@ variable "flow_log_max_aggregation_interval" {
 }
 
 variable "manage_default_security_group" {
+  description = "Set to true to adopt and manage default security group"
   default = false
   type    = bool
 }
 
 variable "name" {
+  description = "Specify the name of the VPC"
   default = ""
   type    = string
 }
 
 variable "one_nat_gateway_per_az" {
+  description = "Set to true if a NAT Gateway is required per availability zone for Private Subnet Tier"
   default = false
   type    = bool
 }
 
 variable "public_subnets" {
+  description = "A list of public subnets CIDR inside the VPC"
   default = []
   type    = list(any)
 }
 
 variable "private_subnets" {
+  description = "A list of private subnets CIDR inside the VPC"
   default = []
   type    = list(any)
 }
 
 variable "region" {
-  default = "ap-south-1"
+  description = "Specify the region in which VPC will be created"
+  default = "us-east-1"
   type    = string
 }
 
 variable "single_nat_gateway" {
+  description = "Should be true if you want to provision a single shared NAT Gateway across all of your private networks"
   default = false
   type    = bool
 }
 
 variable "vpc_cidr" {
+  description = "The CIDR block of the Default VPC"
   default = "10.0.0.0/16"
   type    = string
 }
 
 
 variable "create_cis_vpc" {
+  description = "Set to true if the VPC needs to have CIS controls enables."
   default  = false
   type      = bool
 }
@@ -227,31 +242,37 @@ variable "default_security_group_ingress_cis" {
 }
 
 variable "enable_public_subnet" {
+  description = "Set true to enable public subnets"
   default = false
   type    = bool
 }
 
 variable "enable_private_subnet" {
+  description = "Set true to enable private subnets"
   default = false
   type    = bool
 }
 
 variable "enable_database_subnet" {
+  description = "Set true to enable database subnets"
   default = false
   type    = bool
 }
 
 variable "enable_intra_subnet" {
+  description = "Set true to enable intra subnets"
   default = false
   type    = bool
 }
 
 variable "intra_subnets" {
+  description = "A list of intra subnets CIDR"
   default = []
   type    = list(any)
 }
 
 variable "public_key_vpn" {
+  description = "Specify the public key"
   default = ""
   type    = string
 }

@@ -1,5 +1,5 @@
 output "_1_region" {
-  description = "AWS Region"
+  description = "AWS Region for the VPC"
   value       = var.region
 }
 
@@ -9,7 +9,7 @@ output "_2_vpc_id" {
 }
 
 output "_3_vpc_cidr_block" {
-  description = "AWS Region"
+  description = "IPV4 CIDR Block for this VPC"
   value = module.vpc.vpc_cidr_block
 }
 
@@ -29,12 +29,13 @@ output "_6_database_subnets" {
 }
 
 output "intra_subnets" {
+  description = "Intra Subnet IDs"
   value = length(module.vpc.intra_subnets) > 0 ? module.vpc.intra_subnets : null
 
 }
 
 output "_7_vpn-host-public-ip" {
-  description = "IP Adress of VPN Server"
+  description = "IP Address of VPN Server"
   value = var.vpn_server_enabled ? aws_eip.vpn.0.public_ip : null
 }
 
@@ -48,13 +49,7 @@ output "_8_vpn_server_info_pem" {
   value = var.vpn_server_enabled ? "SAVE THIS FILE AS .pem FOR ACCESSING vpn HOST" : null
 }
 
-output "vpn_server_pem_file" {
-  description = "Warning!! ! Please Save this for future use !"
-  value       = var.vpn_server_enabled ? nonsensitive(tls_private_key.vpn.0.private_key_pem) : null
-}
-
 output "pritunl_info" {
   description = "Pritunl Info"
   value       = var.vpn_server_enabled ? "Please check the Pritunl keys and login credentials in 'pritunl-info.txt' file in 'pritunl' folder" : null
 }
-
