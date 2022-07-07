@@ -1,6 +1,0 @@
-Keys:
-e4b8446586674280be6c9b7f502cc9da
-Administrator default password:
-  username: "pritunl"
-  password: "ikNs96qGpSY6"
-

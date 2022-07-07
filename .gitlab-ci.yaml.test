@@ -24,4 +24,3 @@ validate:
   stage: pre-commit
   script:
     - pre-commit run ---all-files
-

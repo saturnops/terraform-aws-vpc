@@ -48,14 +48,14 @@ module "security_group_vpn" {
       from_port   = 80
       to_port     = 80
       protocol    = "tcp"
-      description = "Public SSH access"
+      description = "Public HTTP access"
       cidr_blocks = "0.0.0.0/0"
     },
     {
       from_port   = 443
       to_port     = 443
       protocol    = "tcp"
-      description = "Public SSH access"
+      description = "Public HTTPS access"
       cidr_blocks = "0.0.0.0/0"
     }
   ]
