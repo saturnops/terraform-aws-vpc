@@ -235,7 +235,7 @@ resource "null_resource" "key_file" {
   count = var.vpn_server_enabled ? 1 : 0
   depends_on = [null_resource.run_ssm_command]
   provisioner "local-exec" {
-    command = "echo Keys:   >> pritunl/pritunl-info.txt"
+    command = "echo Keys:   >> pritunl-info.txt"
   }
 }
 
@@ -243,7 +243,7 @@ resource "null_resource" "get_ssm_output" {
   count = var.vpn_server_enabled ? 1 : 0
   depends_on = [time_sleep.wait_30_sec]
   provisioner "local-exec" {
-    command = "aws ssm list-command-invocations --region ${var.region}  --instance-id '${join("",module.vpn_server[0].id)}' --details | jq --raw-output '.CommandInvocations[].CommandPlugins[].Output' >> pritunl/pritunl-info.txt"
+    command = "aws ssm list-command-invocations --region ${var.region}  --instance-id '${join("",module.vpn_server[0].id)}' --details | jq --raw-output '.CommandInvocations[].CommandPlugins[].Output' >> pritunl-info.txt"
   }
 }
 
@@ -251,6 +251,6 @@ resource "null_resource" "pritunl_file" {
   count = var.vpn_server_enabled ? 1 : 0
   depends_on = [null_resource.get_ssm_output]
   provisioner "local-exec" {
-    command = "sed -i '3d' pritunl/pritunl-info.txt"
+    command = "sed -i '3d' pritunl-info.txt"
   }
 }
