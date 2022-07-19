@@ -62,6 +62,11 @@ module "vpc" {
     "Subnet-group" = "database"
   })
 
+  intra_subnet_tags = tomap({
+    "Name"         = "${var.environment}-${var.name}-intra-subnet"
+    "Subnet-group" = "intra"
+  })
+
   # TAGGING FOR DEFAULT NACL
 
   default_network_acl_name = format("%s-%s-nacl", var.environment, var.name)
