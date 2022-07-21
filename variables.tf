@@ -33,7 +33,7 @@ variable "create_database_nat_gateway_route" {
 variable "create_database_subnet_route_table" {
   description = "Controls if separate route table for database should be created"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "default_network_acl_ingress" {

@@ -34,9 +34,14 @@ output "intra_subnets" {
 
 }
 
-output "vpn-host-public-ip" {
+output "vpn_host_public_ip" {
   description = "IP Address of VPN Server"
   value = var.vpn_server_enabled ? aws_eip.vpn.0.public_ip : null
+}
+
+output "vpn_security_group" {
+  description = "Security Group ID of VPN Server"
+  value = var.vpn_server_enabled ? var.create_cis_vpc ? [module.security_group_vpn_cis.0.security_group_id] : [module.security_group_vpn.0.security_group_id] : null
 }
 
 output "local_file" {
