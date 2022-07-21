@@ -1,3 +1,11 @@
+## IAM permission Required to run this module
+
+- AmazonVPCFullAccess
+- CloudWatchFullAccess
+- AmazonSSMFullAccess
+- AmazonEC2FullAccess
+- IAMFullAccess
+
 # AWS Virtual Private Cloud (VPC) Terraform Module
 
 Terraform module which creates Network resources on AWS.
