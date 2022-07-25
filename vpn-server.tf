@@ -143,14 +143,14 @@ data "aws_iam_policy" "SSMManagedInstanceCore" {
 
 resource "aws_iam_role_policy_attachment" "SSMManagedInstanceCore_attachment" {
   count      = var.vpn_server_enabled ? 1 : 0
-  role       = join("",aws_iam_role.vpn_role.[0].name)
+  role       = join("",aws_iam_role.vpn_role.*.name)
   policy_arn = data.aws_iam_policy.SSMManagedInstanceCore.arn
 }
 
 resource "aws_iam_instance_profile" "vpn_SSM" {
   count = var.vpn_server_enabled ? 1 : 0
   name = format("%s-%s-%s", var.environment, var.name, "vpnEC2InstanceProfile")
-  role = join("",aws_iam_role.vpn_role.[0].name)
+  role = join("",aws_iam_role.vpn_role.*.name)
 }
 
 module "security_group_vpn_cis" {

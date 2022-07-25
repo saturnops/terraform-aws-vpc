@@ -46,5 +46,5 @@ output "vpn_security_group" {
 
 output "pritunl_info" {
   description = "Pritunl Info"
-  value       = var.vpn_server_enabled ? "Please check the Pritunl keys and login credentials in 'pritunl-info.txt' file. : null
+  value       = var.vpn_server_enabled ? "Please check the Pritunl keys and login credentials in 'pritunl-info.txt' file." : null
 }
