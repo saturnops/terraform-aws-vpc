@@ -44,17 +44,7 @@ output "vpn_security_group" {
   value = var.vpn_server_enabled ? var.create_cis_vpc ? [module.security_group_vpn_cis.0.security_group_id] : [module.security_group_vpn.0.security_group_id] : null
 }
 
-output "local_file" {
-  description = "Path of pem file"
-  value       = var.vpn_server_enabled ? format("%s-%s-%s-%s", path.module, var.environment, var.name, "vpn-key-pair.pem") : null
-}
-
-output "vpn_server_info_pem" {
-  description = "VPN PEM file Info "
-  value = var.vpn_server_enabled ? "SAVE THIS FILE AS .pem FOR ACCESSING vpn HOST" : null
-}
-
 output "pritunl_info" {
   description = "Pritunl Info"
-  value       = var.vpn_server_enabled ? "Please check the Pritunl keys and login credentials in 'pritunl-info.txt' file in 'pritunl' folder" : null
+  value       = var.vpn_server_enabled ? "Please check the Pritunl keys and login credentials in 'pritunl-info.txt' file. : null
 }

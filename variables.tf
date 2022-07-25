@@ -1,5 +1,5 @@
 variable "additional_tags" {
-  description = "Tags for resources "
+  description = "Additional common Tags for all AWS resources"
   type        = map(string)
   default = {
     automation = "true"
@@ -8,6 +8,12 @@ variable "additional_tags" {
 
 variable "application_subnets" {
   description = "Application Tier subnet IDs"
+  default = []
+  type    = list(any)
+}
+
+variable "azs" {
+  description = "List of Availability Zone to be used by VPC"
   default = []
   type    = list(any)
 }
@@ -22,18 +28,6 @@ variable "vpn_server_instance_type" {
   description = "EC2 instance Type for VPN Server"
   default = "t3a.small"
   type    = string
-}
-
-variable "create_database_nat_gateway_route" {
-  description = "Controls if a nat gateway route should be created to give internet access to the database subnets"
-  type        = bool
-  default     = false
-}
-
-variable "create_database_subnet_route_table" {
-  description = "Controls if separate route table for database should be created"
-  type        = bool
-  default     = true
 }
 
 variable "default_network_acl_ingress" {
@@ -110,12 +104,6 @@ variable "enable_flow_log" {
   default     = false
 }
 
-#variable "enable_nat_gateway" {
-#  description = "Set to true if you want to provision NAT Gateway"
-#  default = false
-#  type    = bool
-#}
-
 variable "environment" {
   description = "Specify the environment indentifier for the VPC"
   default = ""
@@ -168,12 +156,6 @@ variable "region" {
   description = "Specify the region in which VPC will be created"
   default = "us-east-1"
   type    = string
-}
-
-variable "single_nat_gateway" {
-  description = "Should be true if you want to provision a single shared NAT Gateway across all of your private networks"
-  default = false
-  type    = bool
 }
 
 variable "vpc_cidr" {
@@ -271,8 +253,8 @@ variable "intra_subnets" {
   type    = list(any)
 }
 
-variable "public_key_vpn" {
-  description = "Specify the public key"
+variable "vpn_key_pair" {
+  description = "Specify the name of AWS Keypair to be used for VPN Server"
   default = ""
   type    = string
 }

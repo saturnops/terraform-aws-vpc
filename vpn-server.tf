@@ -1,26 +1,5 @@
 data "aws_caller_identity" "current" {}
 
-resource "tls_private_key" "vpn" {
-  count     = var.vpn_server_enabled ? 1 : 0
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-resource "local_file" "vpn_private_key" {
-  count           = var.vpn_server_enabled ? 1 : 0
-  content         = tls_private_key.vpn.0.private_key_pem
-  filename        = format("%s-%s-%s", var.environment, var.name, "vpn-key-pair.pem")
-  file_permission = "0600"
-}
-
-module "vpn_key_pair" {
-  count      = var.vpn_server_enabled ? 1 : 0
-  source     = "terraform-aws-modules/key-pair/aws"
-  version    = "0.6.0"
-  key_name   = format("%s-%s-%s", var.environment, var.name, "vpn-key-pair")
-  public_key = tls_private_key.vpn.0.public_key_openssh
-}
-
 resource "aws_eip" "vpn" {
   count    = var.vpn_server_enabled ? 1 : 0
   vpc      = true
@@ -38,13 +17,6 @@ module "security_group_vpn" {
 
   ingress_with_cidr_blocks = [
     {
-      from_port   = 22
-      to_port     = 22
-      protocol    = "tcp"
-      description = "Public SSH access"
-      cidr_blocks = "0.0.0.0/0"
-    },
-    {
       from_port   = 80
       to_port     = 80
       protocol    = "tcp"
@@ -56,6 +28,13 @@ module "security_group_vpn" {
       to_port     = 443
       protocol    = "tcp"
       description = "Public HTTPS access"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      from_port   = 10150
+      to_port     = 10150
+      protocol    = "udp"
+      description = "VPN Server Port"
       cidr_blocks = "0.0.0.0/0"
     }
   ]
@@ -114,7 +93,7 @@ module "vpn_server" {
   ami                         = data.aws_ami.ubuntu_18_ami.0.image_id
   instance_type               = var.vpn_server_instance_type
   subnet_ids                  = module.vpc.public_subnets
-  key_name                    = var.public_key_vpn
+  key_name                    = var.vpn_key_pair
   associate_public_ip_address = true
   vpc_security_group_ids      = var.create_cis_vpc ? [module.security_group_vpn_cis.0.security_group_id] : [module.security_group_vpn.0.security_group_id]
   user_data                   = join("", data.template_file.pritunl.*.rendered)
@@ -164,14 +143,14 @@ data "aws_iam_policy" "SSMManagedInstanceCore" {
 
 resource "aws_iam_role_policy_attachment" "SSMManagedInstanceCore_attachment" {
   count      = var.vpn_server_enabled ? 1 : 0
-  role       = join("",aws_iam_role.vpn_role.*.name)
+  role       = join("",aws_iam_role.vpn_role.[0].name)
   policy_arn = data.aws_iam_policy.SSMManagedInstanceCore.arn
 }
 
 resource "aws_iam_instance_profile" "vpn_SSM" {
   count = var.vpn_server_enabled ? 1 : 0
   name = format("%s-%s-%s", var.environment, var.name, "vpnEC2InstanceProfile")
-  role = join("",aws_iam_role.vpn_role.*.name)
+  role = join("",aws_iam_role.vpn_role.[0].name)
 }
 
 module "security_group_vpn_cis" {
