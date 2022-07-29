@@ -71,6 +71,8 @@ This module supports three scenarios for creating NAT gateways. Each will be exp
 
 If both `single_nat_gateway` and `one_nat_gateway_per_az` are set to `true`, then `single_nat_gateway` takes precedence.
 
+Make sure whenever you set `one_nat_gateway_per_az` to `true` you should have as many public subnets as we have AZ in the region or else this module will fail cause some `region` has more than 3 AZ like N.Virginia and we bydefault provisoning only 3 public subnets 
+
 - To create ***CIS compliant VPC*** set the variable ***create_cis_vpc*** to ***true*** in the .tfvars file.
 
 - To add SSL to the Pritunl endpoint:
