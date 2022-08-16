@@ -1,5 +1,13 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_ec2_instance_type" "arch" {
+  instance_type = var.vpn_server_instance_type
+}
+
+locals {
+  arch = data.aws_ec2_instance_type.arch.supported_architectures.0 == "arm64" ? "arm64" : "amd64"
+}
+
 resource "aws_eip" "vpn" {
   count    = var.vpn_server_enabled ? 1 : 0
   vpc      = true
@@ -17,13 +25,6 @@ module "security_group_vpn" {
 
   ingress_with_cidr_blocks = [
     {
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      description = "Public HTTP access"
-      cidr_blocks = "0.0.0.0/0"
-    },
-    {
       from_port   = 443
       to_port     = 443
       protocol    = "tcp"
@@ -36,6 +37,13 @@ module "security_group_vpn" {
       protocol    = "udp"
       description = "VPN Server Port"
       cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      description = "SSH Port"
+      cidr_blocks = var.vpc_cidr
     }
   ]
 
@@ -56,14 +64,13 @@ module "security_group_vpn" {
   )
 }
 
-data "aws_ami" "ubuntu_18_ami" {
-  count       = var.vpn_server_enabled ? 1 : 0
+data "aws_ami" "ubuntu_20_ami" {
   owners      = ["099720109477"]
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-${local.arch}-server-*"]
   }
 
   filter {
@@ -71,6 +78,7 @@ data "aws_ami" "ubuntu_18_ami" {
     values = ["hvm"]
   }
 }
+
 
 data "template_file" "pritunl" {
   count = var.vpn_server_enabled ? 1 : 0
@@ -90,7 +98,7 @@ module "vpn_server" {
   version                     = "2.17.0"
   name                        = format("%s-%s-%s", var.environment, var.name, "vpn-ec2-instance")
   instance_count              = 1
-  ami                         = data.aws_ami.ubuntu_18_ami.0.image_id
+  ami                         = data.aws_ami.ubuntu_20_ami.image_id
   instance_type               = var.vpn_server_instance_type
   subnet_ids                  = module.vpc.public_subnets
   key_name                    = var.vpn_key_pair
