@@ -11,7 +11,7 @@ locals {
 
 module "vpc" {
   source                                          = "terraform-aws-modules/vpc/aws"
-  version                                         = "2.77.0"
+  version                                         = "3.14.2"
   name                                            = format("%s-%s-vpc", var.environment, var.name)
   cidr                                            = var.vpc_cidr # CIDR FOR VPC
   azs                                             = var.azs
@@ -35,9 +35,9 @@ module "vpc" {
   flow_log_max_aggregation_interval               = var.flow_log_max_aggregation_interval
   flow_log_destination_type                       = "cloud-watch-logs"
   flow_log_cloudwatch_log_group_retention_in_days = var.flow_log_cloudwatch_log_group_retention_in_days
-  manage_default_security_group                   = var.create_cis_vpc ? true : false
-  default_security_group_ingress                  = var.create_cis_vpc ? var.default_security_group_ingress_cis : var.default_security_group_ingress
-  default_security_group_egress                   = var.create_cis_vpc ? var.default_security_group_egress_cis : var.default_security_group_egress
+  manage_default_security_group                   = true
+  default_security_group_ingress                  = var.default_security_group_ingress
+  default_security_group_egress                   = var.default_security_group_egress
 
   # TAGS TO BE ASSOCIATED WITH EACH RESOURCE
 
@@ -53,9 +53,17 @@ module "vpc" {
     "Subnet-group" = "public"
   })
 
+  public_route_table_tags = tomap({
+    "Name"         = "${var.environment}-${var.name}-public-route-table"
+  })
+
   private_subnet_tags = tomap({
     "Name"         = "${var.environment}-${var.name}-private-subnet"
     "Subnet-group" = "private"
+  })
+
+  private_route_table_tags = tomap({
+    "Name"         = "${var.environment}-${var.name}-private-route-table"
   })
 
   database_subnet_tags = tomap({
@@ -63,11 +71,26 @@ module "vpc" {
     "Subnet-group" = "database"
   })
 
+  database_route_table_tags = tomap({
+    "Name"         = "${var.environment}-${var.name}-database-route-table"
+  })
+
   intra_subnet_tags = tomap({
     "Name"         = "${var.environment}-${var.name}-intra-subnet"
     "Subnet-group" = "intra"
   })
 
+  intra_route_table_tags = tomap({
+    "Name"         = "${var.environment}-${var.name}-intra-route-table"
+  })
+
+  igw_tags = tomap({
+    "Name"         = "${var.environment}-${var.name}-igw"
+  })
+
+  nat_gateway_tags = tomap({
+    "Name"         = "${var.environment}-${var.name}-nat"
+  })
   # TAGGING FOR DEFAULT NACL
 
   default_network_acl_name = format("%s-%s-nacl", var.environment, var.name)

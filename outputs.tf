@@ -41,7 +41,7 @@ output "vpn_host_public_ip" {
 
 output "vpn_security_group" {
   description = "Security Group ID of VPN Server"
-  value = var.vpn_server_enabled ? var.create_cis_vpc ? [module.security_group_vpn_cis.0.security_group_id] : [module.security_group_vpn.0.security_group_id] : null
+  value = var.vpn_server_enabled ? [module.security_group_vpn.0.security_group_id] : null
 }
 
 output "pritunl_info" {
