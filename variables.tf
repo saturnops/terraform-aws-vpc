@@ -69,27 +69,13 @@ variable "default_network_acl_tags" {
 variable "default_security_group_egress" {
   description = "List of maps of egress rules to set on the default security group"
   type        = list(map(string))
-  default     = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = "0.0.0.0/0"
-    }
-  ]
+  default     = []
 }
 
 variable "default_security_group_ingress" {
   description = "List of maps of ingress rules to set on the default security group"
   type        = list(map(string))
-  default     = [
-    {
-      protocol  = -1
-      self      = true
-      from_port = 0
-      to_port   = 0
-    }
-  ]
+  default     = []
 }
 
 variable "default_security_group_tags" {
@@ -209,18 +195,6 @@ variable "default_network_acl_ingress_cis" {
       ipv6_cidr_block = "::/0"
     },
   ]
-}
-
-variable "default_security_group_egress_cis" {
-  description = "List of maps of egress rules to set on the default security group"
-  type        = list(map(string))
-  default     = []
-}
-
-variable "default_security_group_ingress_cis" {
-  description = "List of maps of ingress rules to set on the default security group"
-  type        = list(map(string))
-  default     = []
 }
 
 variable "enable_public_subnet" {
