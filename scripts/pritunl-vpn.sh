@@ -1,6 +1,4 @@
 #!/bin/bash
-echo "bootstrapping vpn Server with Pritunl"
-
 sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt focal main
 EOF
@@ -12,17 +10,22 @@ sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list << EOF
 deb https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse
 EOF
 wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
-sudo apt update
-# WireGuard server support
-sudo apt -y install wireguard wireguard-tools
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo ufw disable
-sudo apt -y install pritunl mongodb-org
+sudo apt update
+sudo apt -y install \
+    wireguard \
+    wireguard-tools\
+    unzip \
+    pritunl \
+    mongodb-org
+
+unzip awscliv2.zip
+sudo ./aws/install
+sudo systemctl stop pritunl mongodb
+sleep 10
+sudo pritunl set-mongodb mongodb://localhost:27017/pritunl
 sudo systemctl enable mongod pritunl
 sudo systemctl start mongod pritunl
-sudo systemctl Stop pritunl mongodb
-sleep 10
-
-#Set path for MongoDB:
-echo "Set path for MongoDB..."
-sudo pritunl set-mongodb mongodb://localhost:27017/pritunl
 sudo systemctl start pritunl mongodb
