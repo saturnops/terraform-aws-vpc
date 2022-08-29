@@ -160,40 +160,57 @@ resource "time_sleep" "wait_2_min" {
   create_duration = "2m"
 }
 
-resource "null_resource" "run_ssm_command" {
-  count = var.vpn_server_enabled && local.arch == "amd64" ? 1 : 0
+data "aws_iam_policy" "SecretsManagerReadWrite" {
+  arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+}
+
+resource "aws_iam_role_policy_attachment" "SecretsManagerReadWrite_attachment" {
+  count      = var.vpn_server_enabled ? 1 : 0
+  role       = join("",aws_iam_role.vpn_role.*.name)
+  policy_arn = data.aws_iam_policy.SecretsManagerReadWrite.arn
+}
+
+resource "aws_ssm_association" "ssm_association" {
+  name = aws_ssm_document.ssm_document.name
   depends_on = [time_sleep.wait_2_min]
-  provisioner "local-exec" {
-    command = "aws ssm send-command --instance-ids '${join("",module.vpn_server[0].id)}'  --region ${var.region} --document-name 'AWS-RunShellScript' --parameters commands=['sudo pritunl setup-key','sudo pritunl default-password']"
+  targets {
+    key    = "InstanceIds"
+    values = ["${join("",module.vpn_server[0].id)}"]
   }
 }
 
-resource "time_sleep" "wait_30_sec" {
-  count = var.vpn_server_enabled && local.arch == "amd64" ? 1 : 0
-  depends_on = [null_resource.run_ssm_command]
-  create_duration = "30s"
+resource "aws_ssm_document" "ssm_document" {
+  name          = "ssm_document_create_secret"
+  depends_on = [time_sleep.wait_2_min]
+  document_type = "Command"
+  content = <<DOC
+  {
+   "schemaVersion": "2.2",
+   "description": "to create pritunl keys",
+   "parameters": {
+      "Message": {
+         "type": "String",
+         "description": "to staore pritunl key and password",
+         "default": ""
+      }
+   },
+   "mainSteps": [
+      {
+         "action": "aws:runShellScript",
+         "name": "example",
+         "inputs": {
+            "runCommand": [
+               "PASSWORD=$(sudo pritunl default-password | grep password | awk '{ print $2 }' | tail -n1)",
+               "SETUPKEY=$(sudo pritunl setup-key)",
+               "aws secretsmanager create-secret --region us-east-2 --name pritunal-user-password81 --secret-string \"{\\\"user\\\": \\\"pritunl\\\", \\\"password\\\": $PASSWORD, \\\"setup-key\\\": \\\"$SETUPKEY\\\"}\""
+            ]
+         }
+      }
+   ]
+}
+DOC
 }
 
-resource "null_resource" "key_file" {
-  count = var.vpn_server_enabled && local.arch == "amd64" ? 1 : 0
-  depends_on = [null_resource.run_ssm_command]
-  provisioner "local-exec" {
-    command = "echo Keys:   >> pritunl-info.txt"
-  }
-}
 
-resource "null_resource" "get_ssm_output" {
-  count = var.vpn_server_enabled && local.arch == "amd64" ? 1 : 0
-  depends_on = [time_sleep.wait_30_sec]
-  provisioner "local-exec" {
-    command = "aws ssm list-command-invocations --region ${var.region}  --instance-id '${join("",module.vpn_server[0].id)}' --details | jq --raw-output '.CommandInvocations[].CommandPlugins[].Output' >> pritunl-info.txt"
-  }
-}
 
-resource "null_resource" "pritunl_file" {
-  count = var.vpn_server_enabled && local.arch == "amd64" ? 1 : 0
-  depends_on = [null_resource.get_ssm_output]
-  provisioner "local-exec" {
-    command = "sed -i '3d' pritunl-info.txt"
-  }
-}
+
