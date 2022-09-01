@@ -171,7 +171,8 @@ resource "aws_iam_role_policy_attachment" "SecretsManagerReadWrite_attachment" {
 }
 
 resource "aws_ssm_association" "ssm_association" {
-  name = aws_ssm_document.ssm_document.name
+  count = var.vpn_server_enabled && local.arch == "amd64" ? 1 : 0
+  name = aws_ssm_document.ssm_document[0].name
   depends_on = [time_sleep.wait_2_min]
   targets {
     key    = "InstanceIds"
@@ -180,7 +181,8 @@ resource "aws_ssm_association" "ssm_association" {
 }
 
 resource "aws_ssm_document" "ssm_document" {
-  name          = "ssm_document_create_secret"
+  count = var.vpn_server_enabled && local.arch == "amd64" ? 1 : 0
+  name          = format("%s-%s-%s", var.environment, var.name, "ssm_document_create_secret")
   depends_on = [time_sleep.wait_2_min]
   document_type = "Command"
   content = <<DOC
@@ -200,9 +202,9 @@ resource "aws_ssm_document" "ssm_document" {
          "name": "example",
          "inputs": {
             "runCommand": [
-               "PASSWORD=$(sudo pritunl default-password | grep password | awk '{ print $2 }' | tail -n1)",
                "SETUPKEY=$(sudo pritunl setup-key)",
-               "aws secretsmanager create-secret --region us-east-2 --name pritunal-user-password81 --secret-string \"{\\\"user\\\": \\\"pritunl\\\", \\\"password\\\": $PASSWORD, \\\"setup-key\\\": \\\"$SETUPKEY\\\"}\""
+               "PASSWORD=$(sudo pritunl default-password | grep password | awk '{ print $2 }' | tail -n1)",               
+               "aws secretsmanager create-secret --region ${var.region} --name ${var.environment}-${var.name}-vpn --secret-string \"{\\\"user\\\": \\\"pritunl\\\", \\\"password\\\": $PASSWORD, \\\"setup-key\\\": \\\"$SETUPKEY\\\"}\""
             ]
          }
       }
