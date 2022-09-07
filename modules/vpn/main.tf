@@ -1,6 +1,6 @@
 resource "aws_eip" "vpn" {
   vpc      = true
-  instance = module.vpn_server.0.id
+  instance = module.vpn_server.id[0]
 }
 
 module "security_group_vpn" {
@@ -82,7 +82,7 @@ module "vpn_server" {
   subnet_ids                  = var.public_subnets
   key_name                    = var.vpn_key_pair
   associate_public_ip_address = true
-  vpc_security_group_ids      = [module.security_group_vpn.0.security_group_id]
+  vpc_security_group_ids      = [module.security_group_vpn.security_group_id]
   user_data                   = join("", data.template_file.pritunl.*.rendered)
   iam_instance_profile        = join("", aws_iam_instance_profile.vpn_SSM.*.name)
 
@@ -128,13 +128,13 @@ data "aws_iam_policy" "SSMManagedInstanceCore" {
 }
 
 resource "aws_iam_role_policy_attachment" "SSMManagedInstanceCore_attachment" {
-  role       = join("", aws_iam_role.vpn_role.name)
+  role       = join("", aws_iam_role.vpn_role.*.name)
   policy_arn = data.aws_iam_policy.SSMManagedInstanceCore.arn
 }
 
 resource "aws_iam_instance_profile" "vpn_SSM" {
   name = format("%s-%s-%s", var.environment, var.name, "vpnEC2InstanceProfile")
-  role = join("", aws_iam_role.vpn_role.name)
+  role = join("", aws_iam_role.vpn_role.*.name)
 }
 
 resource "time_sleep" "wait_2_min" {
@@ -147,7 +147,7 @@ data "aws_iam_policy" "SecretsManagerReadWrite" {
 }
 
 resource "aws_iam_role_policy_attachment" "SecretsManagerReadWrite_attachment" {
-  role       = join("", aws_iam_role.vpn_role.name)
+  role       = join("", aws_iam_role.vpn_role.*.name)
   policy_arn = data.aws_iam_policy.SecretsManagerReadWrite.arn
 }
 
