@@ -54,7 +54,7 @@ variable "enable_private_subnet" {
   type        = bool
 }
 
-variable "private_subnets" {
+variable "private_subnet_cidrs" {
   description = "A list of private subnets CIDR to be created inside the VPC"
   default     = []
   type        = list(any)
@@ -66,7 +66,7 @@ variable "enable_database_subnet" {
   type        = bool
 }
 
-variable "database_subnets" {
+variable "database_subnet_cidrs" {
   description = "Database Tier subnet CIDRs to be created"
   default     = []
   type        = list(any)
@@ -78,7 +78,7 @@ variable "enable_intra_subnet" {
   type        = bool
 }
 
-variable "intra_subnets" {
+variable "intra_subnet_cidrs" {
   description = "A list of intra subnets CIDR to be created"
   default     = []
   type        = list(any)

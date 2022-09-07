@@ -1,8 +1,8 @@
 locals {
-  public_subnets                       = var.enable_public_subnet ? length(var.public_subnets) > 0 ? var.public_subnets : [for netnum in range(0, 3) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
-  private_subnets                      = var.enable_private_subnet ? length(var.private_subnets) > 0 ? var.private_subnets : [for netnum in range(3, 6) : cidrsubnet(var.vpc_cidr, 3, netnum)] : []
-  database_subnets                     = var.enable_database_subnet ? length(var.database_subnets) > 0 ? var.database_subnets : [for netnum in range(6, 9) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
-  intra_subnets                        = var.enable_intra_subnet ? length(var.intra_subnets) > 0 ? var.intra_subnets : [for netnum in range(9, 12) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
+  public_subnets                       = var.enable_public_subnet ? length(var.public_subnet_cidrs) > 0 ? var.public_subnet_cidrs : [for netnum in range(0, 3) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
+  private_subnets                      = var.enable_private_subnet ? length(var.private_subnet_cidrs) > 0 ? var.private_subnet_cidrs : [for netnum in range(3, 6) : cidrsubnet(var.vpc_cidr, 3, netnum)] : []
+  database_subnets                     = var.enable_database_subnet ? length(var.database_subnet_cidrs) > 0 ? var.database_subnet_cidrs : [for netnum in range(6, 9) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
+  intra_subnets                        = var.enable_intra_subnet ? length(var.intra_subnet_cidrs) > 0 ? var.intra_subnet_cidrs : [for netnum in range(9, 12) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
   single_nat_gateway                   = var.one_nat_gateway_per_az == true ? false : true
   create_database_subnet_route_table   = var.enable_database_subnet
   create_flow_log_cloudwatch_log_group = var.enable_flow_log == true ? true : false
