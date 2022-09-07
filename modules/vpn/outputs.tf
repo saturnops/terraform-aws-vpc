@@ -17,4 +17,3 @@ output "vpn_security_group" {
   description = "Security Group ID of VPN Server"
   value       = module.security_group_vpn.security_group_id
 }
-

@@ -16,14 +16,6 @@ variable "name" {
   type        = string
 }
 
-variable "additional_aws_tags" {
-  description = "Additional common Tags for all AWS resources"
-  type        = map(string)
-  default = {
-    automation = "true"
-  }
-}
-
 variable "vpc_cidr" {
   description = "The CIDR block of the VPC"
   default     = "10.0.0.0/16"

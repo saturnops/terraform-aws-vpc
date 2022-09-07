@@ -191,7 +191,3 @@ resource "aws_ssm_document" "ssm_document" {
 }
 DOC
 }
-
-
-
-
