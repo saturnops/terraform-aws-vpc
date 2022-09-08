@@ -6,7 +6,7 @@ locals {
   single_nat_gateway                   = var.one_nat_gateway_per_az == true ? false : true
   create_database_subnet_route_table   = var.enable_database_subnet
   create_flow_log_cloudwatch_log_group = var.enable_flow_log == true ? true : false
-  is_supported_arch                    = data.aws_ec2_instance_type.arch.supported_architectures.0 == "arm64" ? false : true # for VPN Instance
+  is_supported_arch                    = data.aws_ec2_instance_type.arch.supported_architectures[0] == "arm64" ? false : true # for VPN Instance
 }
 
 data "aws_ec2_instance_type" "arch" {

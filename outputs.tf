@@ -36,10 +36,10 @@ output "intra_subnets" {
 
 output "vpn_host_public_ip" {
   description = "IP Address of VPN Server"
-  value       = var.vpn_server_enabled ? module.vpn_server.0.vpn_host_public_ip : null
+  value       = var.vpn_server_enabled ? module.vpn_server[0].vpn_host_public_ip : null
 }
 
 output "vpn_security_group" {
   description = "Security Group ID of VPN Server"
-  value       = var.vpn_server_enabled ? module.vpn_server.0.vpn_security_group : null
+  value       = var.vpn_server_enabled ? module.vpn_server[0].vpn_security_group : null
 }
