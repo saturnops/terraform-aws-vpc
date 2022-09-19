@@ -5,7 +5,7 @@ resource "aws_eip" "vpn" {
 
 module "security_group_vpn" {
   source      = "terraform-aws-modules/security-group/aws"
-  version     = "~> 4"
+  version     = "4.13.0"
   create      = true
   name        = format("%s-%s-%s", var.environment, var.name, "vpn-sg")
   description = "vpn server security group"
@@ -74,7 +74,7 @@ data "template_file" "pritunl" {
 
 module "vpn_server" {
   source                      = "terraform-aws-modules/ec2-instance/aws"
-  version                     = "2.17.0"
+  version                     = "4.1.4"
   name                        = format("%s-%s-%s", var.environment, var.name, "vpn-ec2-instance")
   instance_count              = 1
   ami                         = data.aws_ami.ubuntu_20_ami.image_id
