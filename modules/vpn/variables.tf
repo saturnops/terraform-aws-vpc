@@ -17,10 +17,10 @@ variable "name" {
   type        = string
 }
 
-variable "public_subnets" {
-  description = "A list of public subnets CIDR inside the VPC"
-  default     = []
-  type        = list(any)
+variable "public_subnet" {
+  description = "The VPC Subnet ID to launch in"
+  default     = ""
+  type        = string
 }
 
 variable "region" {

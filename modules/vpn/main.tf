@@ -1,6 +1,6 @@
 resource "aws_eip" "vpn" {
   vpc      = true
-  instance = module.vpn_server.id[0]
+  instance = module.vpn_server.id
 }
 
 module "security_group_vpn" {
@@ -76,10 +76,9 @@ module "vpn_server" {
   source                      = "terraform-aws-modules/ec2-instance/aws"
   version                     = "4.1.4"
   name                        = format("%s-%s-%s", var.environment, var.name, "vpn-ec2-instance")
-  instance_count              = 1
   ami                         = data.aws_ami.ubuntu_20_ami.image_id
   instance_type               = var.vpn_server_instance_type
-  subnet_ids                  = var.public_subnets
+  subnet_id                   = var.public_subnet
   key_name                    = var.vpn_key_pair
   associate_public_ip_address = true
   vpc_security_group_ids      = [module.security_group_vpn.security_group_id]
@@ -156,7 +155,7 @@ resource "aws_ssm_association" "ssm_association" {
   depends_on = [time_sleep.wait_2_min]
   targets {
     key    = "InstanceIds"
-    values = ["${join("", module.vpn_server.id)}"]
+    values = [module.vpn_server.id]
   }
 }
 
