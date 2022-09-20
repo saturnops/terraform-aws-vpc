@@ -18,65 +18,53 @@ module "vpc" {
 }
 
 ```
-Refer ```examples``` directory for more reference.
+Refer [examples](https://gitlab.com/saturnops/sal/terraform/aws/network/-/tree/qa/examples) directory for more references.
 
 ## Network Scenarios
 
+Users only need to provide `vpc_cidr` and subnets are calculated with the help of [in-built functions](https://gitlab.com/saturnops/sal/terraform/aws/network/-/blob/qa/main.tf#L2).
+
 This module supports three scenarios for creating Network resource on AWS. Each will be explained in further detail in the corresponding sections.
 
-- **vpc_minimal (default behavior):** For creating a VPC with only public subnets and IGW.
+- **simple-vpc (default behavior):** For creating a VPC with only public subnets and IGW.
   - `vpc_cidr       = ""`
-  - `public_subnets = []`
-- **vpc_secure:** For creating a VPC with both public and private subnets and IGW and NAT gateway. Jump server/Bastion Host is also configured.
-  - `public_subnets                    = []`  
-  - `private_subnets                   = []`     
-  - `enable_nat_gateway                = true`
-  - `single_nat_gateway                = true`
-  - `one_nat_gateway_per_az            = false`
-  - `vpn_host_enabled                  = true`
-  - `vpn_host_instance_type            = "t3a.small"`
-  - `enable_flow_log                   = false`
-  - `flow_log_max_aggregation_interval = 60`
+  - `enable_public_subnet = true`
+- **vpc-with-private-sub:** For creating a VPC with both public and private subnets and IGW and NAT gateway.
+  - `vpc_cidr              = local.vpc_cidr`
+  - `enable_public_subnet  = true`
+  - `enable_private_subnet = true`
+
+- **complete-vpc-with-vpn:** For creating a VPC with public, private, database and intra subnets along with an IGW and NAT gateway. Jump server/Bastion Host is also configured. 
+  - `vpc_cidr               = local.vpc_cidr`
+  - `enable_public_subnet   = true`
+  - `enable_private_subnet  = true`
+  - `enable_database_subnet = true`
+  - `enable_intra_subnet    = true`
+  - `one_nat_gateway_per_az = false`
+  - `vpn_server_enabled     = true`
+  - `vpn_server_instance_type = "t3a.small"`
+  - `vpn_key_pair             = ""`
+  - `enable_flow_log          = true`
+  - `flow_log_max_aggregation_interval               = 60`
   - `flow_log_cloudwatch_log_group_retention_in_days = 90`
 
-- **vpc_three_tier:** For creating a VPC with public, private and database subnets ( where app and database subnets are private subnets)along with an IGW and NAT gateway. Jump server/Bastion Host is also configured.
-  - `public_subnets         = []`  
-  - `private_subnets        = []`  
-  - `database_subnets       = []`
-  - `create_database_subnet_route_table    = true`
-  - `create_database_nat_gateway_route     = true`
-  - `create_cis_vpc         = true`
+# VPN setup
 
-## NAT Gateway Scenarios
+To configure Pritunl VPN:
 
-This module supports three scenarios for creating NAT gateways. Each will be explained in further detail in the corresponding sections.
+      1. Open the public IP of instance.
+      2. Get the initial key and user, password for setting up Pritunl from Secret Manager and log in to Pritunl.
+      3. Create a DNS record mapping to the vpn host public IP
+      4. After login,in the Initial setup window, add the record created in the 'Lets Encrypt Domain' field.
+      5. Pritunl will automatically configure a signed SSL certificate from Lets Encrypt.
+      6. Add organization and user to pritunl.
+      7. Add server port as 10150 which is already allowed from security group while creating vpn.
+      8. Attach organization to the server and Start the server.
+      9. Copy or download user profile link or file. 
+     10. Import the profile in Pritunl client.
+    
+    NOTE: Port 80 to be open publicly in the vpn security group to verify and renewing the domain certificate.
 
-- One NAT Gateway per subnet (default behavior)
-  - `enable_nat_gateway     = true`
-  - `single_nat_gateway     = false`
-  - `one_nat_gateway_per_az = false`
-- Single NAT Gateway
-  - `enable_nat_gateway     = true`
-  - `single_nat_gateway     = true`
-  - `one_nat_gateway_per_az = false`
-- One NAT Gateway per availability zone
-  - `enable_nat_gateway     = true`
-  - `single_nat_gateway     = false`
-  - `one_nat_gateway_per_az = true`
-
-If both `single_nat_gateway` and `one_nat_gateway_per_az` are set to `true`, then `single_nat_gateway` takes precedence.
-
-Make sure whenever you set `one_nat_gateway_per_az` to `true` you should have as many public subnets as we have AZ in the region or else this module will fail cause some `region` has more than 3 AZ like N.Virginia and we bydefault provisoning only 3 public subnets 
-
-
-- To add SSL to the Pritunl endpoint:
-        
-      1. Create a DNS record mapping to the vpn host public IP
-      2. Login to pritunl from the credentials in the pritunl-info.txt in the pritunl folder.
-      3. After login,in the Initial setup window, add the record created in the 'Lets Encrypt Domain' field.
-      4. Pritunl will automatically configure a signed SSL certificate from Lets Encrypt.
-
-        NOTE: Port 80 to be open publicly in the vpn security group to verify and renewing the domain certificate.
 
 - Follows the VPC recommendations of CIS Amazon Web Services Foundations Benchmark v1.4.0 
 
