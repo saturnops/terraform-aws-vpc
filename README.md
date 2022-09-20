@@ -22,9 +22,9 @@ Refer [examples](https://gitlab.com/saturnops/sal/terraform/aws/network/-/tree/q
 
 ## Network Scenarios
 
-Users only need to provide `vpc_cidr` and subnets are calculated with the help of [in-built functions](https://gitlab.com/saturnops/sal/terraform/aws/network/-/blob/qa/main.tf#L2).
+Users need to provide `vpc_cidr` and subnets are calculated with the help of [in-built functions](https://gitlab.com/saturnops/sal/terraform/aws/network/-/blob/qa/main.tf#L2).
 
-This module supports three scenarios for creating Network resource on AWS. Each will be explained in further detail in the corresponding sections.
+This module supports three scenarios for creating Network resource on AWS. Each will be explained in detail in the corresponding sections.
 
 - **simple-vpc (default behavior):** For creating a VPC with only public subnets and IGW.
   - `vpc_cidr       = ""`
@@ -52,18 +52,18 @@ This module supports three scenarios for creating Network resource on AWS. Each 
 
 To configure Pritunl VPN:
 
-      1. Open the public IP of instance.
-      2. Get the initial key and user, password for setting up Pritunl from Secret Manager and log in to Pritunl.
-      3. Create a DNS record mapping to the vpn host public IP
-      4. After login,in the Initial setup window, add the record created in the 'Lets Encrypt Domain' field.
+      1. Access the Pritunl UI using the public IP of EC2 instance in browser
+      2. Get the initial key, user and password for setting up Pritunl from Secret Manager and log in to Pritunl.
+      3. Create a DNS record mapping to the EC2 instance's public IP
+      4. After login, in the Initial setup window, add the record created in the 'Lets Encrypt Domain' field.
       5. Pritunl will automatically configure a signed SSL certificate from Lets Encrypt.
       6. Add organization and user to pritunl.
-      7. Add server port as 10150 which is already allowed from security group while creating vpn.
+      7. Set server port as 10150 which is already allowed from security group while creating vpn.
       8. Attach organization to the server and Start the server.
       9. Copy or download user profile link or file. 
      10. Import the profile in Pritunl client.
     
-    NOTE: Port 80 to be open publicly in the vpn security group to verify and renewing the domain certificate.
+    NOTE: Port 80 should be open publicly in the vpn security group to verify and renewing the domain certificate.
 
 
 - Follows the VPC recommendations of CIS Amazon Web Services Foundations Benchmark v1.4.0 
