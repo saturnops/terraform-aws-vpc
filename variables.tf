@@ -6,13 +6,11 @@ variable "region" {
 
 variable "environment" {
   description = "Specify the environment indentifier for the VPC"
-  default     = ""
   type        = string
 }
 
 variable "name" {
   description = "Specify the name of the VPC"
-  default     = ""
   type        = string
 }
 
@@ -24,7 +22,6 @@ variable "vpc_cidr" {
 
 variable "azs" {
   description = "List of Availability Zone to be used by VPC"
-  default     = []
   type        = list(any)
 }
 

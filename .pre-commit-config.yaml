@@ -6,13 +6,15 @@ repos:
       - id: terraform-validate
       - id: tflint
         args:
-          - "--module"
-          - "--deep"
+          # - "--module"
           - "--config=.tflint.hcl"
-  - repo: https://github.com/saturnops/pre-commit-terraform
-    rev: v1.47.0
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.74.0
     hooks:
       - id: terraform_docs
+        args:
+          - --hook-config=--add-to-existing-file=true   
+          - --hook-config=--create-file-if-not-exist=true
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.1.0
     hooks:

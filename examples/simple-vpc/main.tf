@@ -2,7 +2,7 @@ locals {
   region      = "us-east-1"
   environment = "dev"
   name        = "simple-example"
-  additional_tags = {
+  additional_aws_tags = {
     Owner      = "SaturnOps"
     Expires    = "Never"
     Department = "Engineering"

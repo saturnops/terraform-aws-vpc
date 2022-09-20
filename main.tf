@@ -113,7 +113,7 @@ module "vpn_server" {
   region                   = var.region
   vpc_cidr                 = var.vpc_cidr
   vpc_id                   = module.vpc.vpc_id
-  public_subnet           = module.vpc.public_subnets[0]
+  public_subnet            = module.vpc.public_subnets[0]
   vpn_key_pair             = var.vpn_key_pair
   vpn_server_instance_type = var.vpn_server_instance_type
 }
