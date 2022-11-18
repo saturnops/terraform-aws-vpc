@@ -170,7 +170,7 @@ resource "aws_ssm_document" "ssm_document" {
    "parameters": {
       "Message": {
          "type": "String",
-         "description": "to staore pritunl key and password",
+         "description": "to store pritunl key and password",
          "default": ""
       }
    },
