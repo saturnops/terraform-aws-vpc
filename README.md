@@ -19,6 +19,8 @@ module "vpc" {
 
 ```
 Refer [examples](https://gitlab.com/saturnops/sal/terraform/aws/network/-/tree/qa/examples) directory for more references.
+## Note
+To prevent destruction interruptions, any extra LBs or resources that have been created outside of Terraform and attached to the Terraform resources must be deleted before the module is destroyed. 
 
 ## Network Scenarios
 
