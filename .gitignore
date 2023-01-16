@@ -1,0 +1,15 @@
+*.tfstate
+*.tfstate.*
+.terraform*
+*.out
+*.lock
+*.tfvars
+*.pem
+vars
+**/.terraform/*
+override.tf
+override.tf.*
+*_override.tf
+*_override.tf.*
+terraform.rc
+*.txt
