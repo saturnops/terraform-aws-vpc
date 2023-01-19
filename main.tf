@@ -15,7 +15,7 @@ data "aws_ec2_instance_type" "arch" {
 
 module "vpc" {
   source                                          = "terraform-aws-modules/vpc/aws"
-  version                                         = "3.14.4"
+  version                                         = "1.0.0"
   name                                            = format("%s-%s-vpc", var.environment, var.name)
   cidr                                            = var.vpc_cidr # CIDR FOR VPC
   azs                                             = var.azs

@@ -18,7 +18,7 @@ data "aws_availability_zones" "available" {}
 ################################################################################
 
 module "vpc" {
-  source = "../../"
+  source = "saturnops/terraform-aws-network"
 
   environment          = local.environment
   name                 = local.name

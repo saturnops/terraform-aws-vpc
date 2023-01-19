@@ -29,7 +29,7 @@ output "database_subnets" {
 }
 
 output "intra_subnets" {
-  description = "Intra Subnet IDs"
+  description = "List of IDs of Intra subnets"
   value       = length(module.vpc.intra_subnets) > 0 ? module.vpc.intra_subnets : null
 
 }

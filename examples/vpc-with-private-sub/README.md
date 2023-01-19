@@ -1,4 +1,20 @@
-# vpc-with-private-sub
+# VPC with Private Subnets
+
+
+A public and private subnet will be created per availability zone in addition to single NAT Gateway shared between all availability zones.
+
+## Usage
+
+To run this example you need to execute:
+
+```bash
+$ terraform init
+$ terraform plan
+$ terraform apply
+```
+
+Note that this example may create resources which can cost money (AWS Elastic IP, for example). Run `terraform destroy` when you don't need these resources.
+
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements

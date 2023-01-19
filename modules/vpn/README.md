@@ -1,5 +1,15 @@
 # VPN
 
+Terraform module to create Pritunl VPN server on AWS.
+
+Pritunl is an VPN software with features including but not limited to:
+- Open Source
+- Supports multiple protocols
+- Supports Single Sign-On
+- Highly secure
+
+Refer [this](https://pritunl.com/) for more information.
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 

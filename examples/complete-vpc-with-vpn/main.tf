@@ -14,7 +14,7 @@ data "aws_region" "current" {}
 data "aws_availability_zones" "available" {}
 
 module "key_pair_vpn" {
-  source             = "git@gitlab.com:saturnops/sal/terraform/aws/ec2-keypair.git?ref=qa"
+  source             = "saturnops/terraform-aws-ec2-keypair"
   region             = local.region
   environment        = local.environment
   key_name           = format("%s-%s-vpn", local.environment, local.name)
@@ -22,7 +22,7 @@ module "key_pair_vpn" {
 }
 
 module "vpc" {
-  source = "git@gitlab.com:saturnops/sal/terraform/aws/network.git?ref=qa"
+  source = "saturnops/terraform-aws-network"
 
   environment                                     = local.environment
   name                                            = local.name
@@ -33,7 +33,7 @@ module "vpc" {
   enable_private_subnet                           = true
   enable_database_subnet                          = true
   enable_intra_subnet                             = true
-  one_nat_gateway_per_az                          = false
+  one_nat_gateway_per_az                          = true
   vpn_server_enabled                              = true
   vpn_server_instance_type                        = "t3a.small"
   vpn_key_pair                                    = module.key_pair_vpn.key_pair_name

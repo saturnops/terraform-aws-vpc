@@ -14,7 +14,7 @@ data "aws_region" "current" {}
 data "aws_availability_zones" "available" {}
 
 module "vpc" {
-  source = "git@gitlab.com:saturnops/sal/terraform/aws/network.git?ref=qa"
+  source = "saturnops/terraform-aws-network"
 
   environment           = local.environment
   name                  = local.name
