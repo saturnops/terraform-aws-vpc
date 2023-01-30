@@ -1,4 +1,24 @@
+<<<<<<< HEAD
 # vpc-with-private-sub
+=======
+# VPC with Private Subnets
+
+
+A public and private subnet will be created per availability zone in addition to single NAT Gateway shared between all availability zones.
+
+## Usage
+
+To run this example you need to execute:
+
+```bash
+$ terraform init
+$ terraform plan
+$ terraform apply
+```
+
+Note that this example may create resources which can cost money (AWS Elastic IP, for example). Run `terraform destroy` when you don't need these resources.
+
+>>>>>>> 2c8b0b1786837923aa83804660386faa61ead176
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -15,14 +35,21 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
+<<<<<<< HEAD
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | git@gitlab.com:saturnops/sal/terraform/aws/network.git | qa |
+=======
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | saturnops/vpc/aws | n/a |
+>>>>>>> 2c8b0b1786837923aa83804660386faa61ead176
 
 ## Resources
 
 | Name | Type |
 |------|------|
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
+<<<<<<< HEAD
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
+=======
+>>>>>>> 2c8b0b1786837923aa83804660386faa61ead176
 
 ## Inputs
 
