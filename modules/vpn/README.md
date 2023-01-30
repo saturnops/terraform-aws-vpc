@@ -17,14 +17,16 @@ Refer [this](https://pritunl.com/) for more information.
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.23 |
+| <a name="requirement_template"></a> [template](#requirement\_template) | >= 2.2.0 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.29.0 |
-| <a name="provider_template"></a> [template](#provider\_template) | 2.2.0 |
-| <a name="provider_time"></a> [time](#provider\_time) | 0.8.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.23 |
+| <a name="provider_template"></a> [template](#provider\_template) | >= 2.2.0 |
+| <a name="provider_time"></a> [time](#provider\_time) | >= 0.9.1 |
 
 ## Modules
 
@@ -48,6 +50,7 @@ Refer [this](https://pritunl.com/) for more information.
 | [aws_ami.ubuntu_20_ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_iam_policy.SSMManagedInstanceCore](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
 | [aws_iam_policy.SecretsManagerReadWrite](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [template_file.pritunl](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
 
 ## Inputs
@@ -57,7 +60,6 @@ Refer [this](https://pritunl.com/) for more information.
 | <a name="input_environment"></a> [environment](#input\_environment) | Specify the environment indentifier for the VPC | `string` | `""` | no |
 | <a name="input_name"></a> [name](#input\_name) | Specify the name of the VPC | `string` | `""` | no |
 | <a name="input_public_subnet"></a> [public\_subnet](#input\_public\_subnet) | The VPC Subnet ID to launch in | `string` | `""` | no |
-| <a name="input_region"></a> [region](#input\_region) | Specify the region in which VPC will be created | `string` | `"us-east-1"` | no |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | The CIDR block of the Default VPC | `string` | `"10.0.0.0/16"` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The ID of the VPC | `string` | `""` | no |
 | <a name="input_vpn_key_pair"></a> [vpn\_key\_pair](#input\_vpn\_key\_pair) | Specify the name of AWS Keypair to be used for VPN Server | `string` | `""` | no |
@@ -67,7 +69,6 @@ Refer [this](https://pritunl.com/) for more information.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_region"></a> [region](#output\_region) | AWS Region for the VPC |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | The ID of the VPC |
 | <a name="output_vpn_host_public_ip"></a> [vpn\_host\_public\_ip](#output\_vpn\_host\_public\_ip) | IP Address of VPN Server |
 | <a name="output_vpn_security_group"></a> [vpn\_security\_group](#output\_vpn\_security\_group) | Security Group ID of VPN Server |

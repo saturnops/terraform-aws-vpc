@@ -72,6 +72,8 @@ data "template_file" "pritunl" {
   template = file("${path.module}/scripts/pritunl-vpn.sh")
 }
 
+data "aws_region" "current" {}
+
 module "vpn_server" {
   source                      = "terraform-aws-modules/ec2-instance/aws"
   version                     = "4.1.4"
@@ -82,8 +84,9 @@ module "vpn_server" {
   key_name                    = var.vpn_key_pair
   associate_public_ip_address = true
   vpc_security_group_ids      = [module.security_group_vpn.security_group_id]
-  user_data                   = join("", data.template_file.pritunl.*.rendered)
-  iam_instance_profile        = join("", aws_iam_instance_profile.vpn_SSM.*.name)
+  user_data                   = join("", data.template_file.pritunl[*].rendered)
+  iam_instance_profile        = join("", aws_iam_instance_profile.vpn_SSM[*].name)
+
 
   root_block_device = [
     {
@@ -127,13 +130,13 @@ data "aws_iam_policy" "SSMManagedInstanceCore" {
 }
 
 resource "aws_iam_role_policy_attachment" "SSMManagedInstanceCore_attachment" {
-  role       = join("", aws_iam_role.vpn_role.*.name)
+  role       = join("", aws_iam_role.vpn_role[*].name)
   policy_arn = data.aws_iam_policy.SSMManagedInstanceCore.arn
 }
 
 resource "aws_iam_instance_profile" "vpn_SSM" {
   name = format("%s-%s-%s", var.environment, var.name, "vpnEC2InstanceProfile")
-  role = join("", aws_iam_role.vpn_role.*.name)
+  role = join("", aws_iam_role.vpn_role[*].name)
 }
 
 resource "time_sleep" "wait_2_min" {
@@ -146,7 +149,7 @@ data "aws_iam_policy" "SecretsManagerReadWrite" {
 }
 
 resource "aws_iam_role_policy_attachment" "SecretsManagerReadWrite_attachment" {
-  role       = join("", aws_iam_role.vpn_role.*.name)
+  role       = join("", aws_iam_role.vpn_role[*].name)
   policy_arn = data.aws_iam_policy.SecretsManagerReadWrite.arn
 }
 
@@ -181,8 +184,8 @@ resource "aws_ssm_document" "ssm_document" {
          "inputs": {
             "runCommand": [
                "SETUPKEY=$(sudo pritunl setup-key)",
-               "PASSWORD=$(sudo pritunl default-password | grep password | awk '{ print $2 }' | tail -n1)",               
-               "aws secretsmanager create-secret --region ${var.region} --name ${var.environment}-${var.name}-vpn --secret-string \"{\\\"user\\\": \\\"pritunl\\\", \\\"password\\\": $PASSWORD, \\\"setup-key\\\": \\\"$SETUPKEY\\\"}\""
+               "PASSWORD=$(sudo pritunl default-password | grep password | awk '{ print $2 }' | tail -n1)",
+               "aws secretsmanager create-secret --region ${data.aws_region.current.name} --name ${var.environment}-${var.name}-vpn --secret-string \"{\\\"user\\\": \\\"pritunl\\\", \\\"password\\\": $PASSWORD, \\\"setup-key\\\": \\\"$SETUPKEY\\\"}\""
             ]
          }
       }

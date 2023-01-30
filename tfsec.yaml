@@ -1,0 +1,9 @@
+exclude:
+  - aws-iam-no-policy-wildcards # Wildcards required in addon IAM policies
+  - aws-vpc-no-excessive-port-access # VPC settings left up to user implementation for recommended practices
+  - aws-vpc-no-public-egress-sgr # Added in v1.22
+  - aws-ec2-no-public-egress-sgr # Added in v1.22
+  - aws-ec2-no-public-ingress-sgr
+  - aws-ec2-enforce-http-token-imds
+  - aws-ec2-no-public-ip-subnet # VPN IP
+  - aws-ec2-require-vpc-flow-logs-for-all-vpcs # disabled flow logs by default

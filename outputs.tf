@@ -1,8 +1,3 @@
-output "region" {
-  description = "AWS Region for the VPC"
-  value       = var.region
-}
-
 output "vpc_id" {
   description = "The ID of the VPC"
   value       = module.vpc.vpc_id

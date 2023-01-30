@@ -1,17 +1,14 @@
-variable "region" {
-  description = "Specify the region in which VPC will be created"
-  default     = "us-east-1"
-  type        = string
-}
-
 variable "environment" {
   description = "Specify the environment indentifier for the VPC"
   type        = string
+  default     = ""
 }
 
 variable "name" {
   description = "Specify the name of the VPC"
   type        = string
+  default     = ""
+
 }
 
 variable "vpc_cidr" {

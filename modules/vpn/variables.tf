@@ -23,12 +23,6 @@ variable "public_subnet" {
   type        = string
 }
 
-variable "region" {
-  description = "Specify the region in which VPC will be created"
-  default     = "us-east-1"
-  type        = string
-}
-
 variable "vpc_cidr" {
   description = "The CIDR block of the Default VPC"
   default     = "10.0.0.0/16"

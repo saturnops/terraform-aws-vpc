@@ -15,7 +15,7 @@ data "aws_ec2_instance_type" "arch" {
 
 module "vpc" {
   source                                          = "terraform-aws-modules/vpc/aws"
-  version                                         = "1.0.0"
+  version                                         = "3.14.4"
   name                                            = format("%s-%s-vpc", var.environment, var.name)
   cidr                                            = var.vpc_cidr # CIDR FOR VPC
   azs                                             = var.azs
@@ -105,12 +105,12 @@ module "vpc" {
 }
 
 module "vpn_server" {
-  count = var.vpn_server_enabled && local.is_supported_arch ? 1 : 0
+  count      = var.vpn_server_enabled && local.is_supported_arch ? 1 : 0
+  depends_on = [module.vpc]
 
   source                   = "./modules/vpn"
   name                     = var.name
   environment              = var.environment
-  region                   = var.region
   vpc_cidr                 = var.vpc_cidr
   vpc_id                   = module.vpc.vpc_id
   public_subnet            = module.vpc.public_subnets[0]

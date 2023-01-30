@@ -1,7 +1,6 @@
 
 ## IAM Permission
 
-<!-- BEGINNING OF PRE-COMMIT-PIKE DOCS HOOK -->
 The Policy required to deploy this module is:
 
 ```json
@@ -200,4 +199,3 @@ The Policy required to deploy this module is:
 }
 
 ```
-<!-- END OF PRE-COMMIT-PIKE DOCS HOOK -->
