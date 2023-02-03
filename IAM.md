@@ -199,7 +199,4 @@ The Policy required to deploy this module is:
 }
 
 ```
-<<<<<<< HEAD
 <!-- END OF PRE-COMMIT-PIKE DOCS HOOK -->
-=======
->>>>>>> 2c8b0b1786837923aa83804660386faa61ead176

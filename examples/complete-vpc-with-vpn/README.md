@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# complete-vpc-with-vpn
-=======
 # Complete VPC with VPN
 
 This configuration is suitable for production environments
@@ -20,7 +17,6 @@ $ terraform apply
 
 Note that this example may create resources which can cost money (AWS Elastic IP, for example). Run `terraform destroy` when you don't need these resources.
 
->>>>>>> 2c8b0b1786837923aa83804660386faa61ead176
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -37,23 +33,14 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-<<<<<<< HEAD
-| <a name="module_key_pair_vpn"></a> [key\_pair\_vpn](#module\_key\_pair\_vpn) | git@gitlab.com:saturnops/sal/terraform/aws/ec2-keypair.git | qa |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | git@gitlab.com:saturnops/sal/terraform/aws/network.git | qa |
-=======
 | <a name="module_key_pair_vpn"></a> [key\_pair\_vpn](#module\_key\_pair\_vpn) | saturnops/keypair/aws | n/a |
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | saturnops/vpc/aws | n/a |
->>>>>>> 2c8b0b1786837923aa83804660386faa61ead176
 
 ## Resources
 
 | Name | Type |
 |------|------|
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
-<<<<<<< HEAD
-| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
-=======
->>>>>>> 2c8b0b1786837923aa83804660386faa61ead176
 
 ## Inputs
 
