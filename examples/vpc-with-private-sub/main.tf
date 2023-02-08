@@ -17,7 +17,6 @@ module "vpc" {
 
   environment           = local.environment
   name                  = local.name
-  region                = local.region
   vpc_cidr              = local.vpc_cidr
   azs                   = [for n in range(0, 3) : data.aws_availability_zones.available.names[n]]
   enable_public_subnet  = true
