@@ -13,8 +13,7 @@ locals {
 data "aws_availability_zones" "available" {}
 
 module "key_pair_vpn" {
-  source = "saturnops/keypair/aws"
-  # region             = local.region
+  source             = "saturnops/keypair/aws"
   environment        = local.environment
   key_name           = format("%s-%s-vpn", local.environment, local.name)
   ssm_parameter_path = format("%s-%s-vpn", local.environment, local.name)
@@ -25,7 +24,6 @@ module "vpc" {
 
   environment                                     = local.environment
   name                                            = local.name
-  region                                          = local.region
   vpc_cidr                                        = local.vpc_cidr
   azs                                             = [for n in range(0, 2) : data.aws_availability_zones.available.names[n]]
   enable_public_subnet                            = true
