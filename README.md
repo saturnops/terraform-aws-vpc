@@ -40,7 +40,8 @@ module "vpc" {
 
 }
 ```
-Refer [examples](https://github.com/saturnops/terraform-aws-vpc/tree/main/examples) for all examples.
+Refer [this](https://github.com/saturnops/terraform-aws-vpc/tree/main/examples) for more examples.
+
 
 ## Note
 To avoid interruptions during the destruction process, ensure that any resources created outside of Terraform, which are connected to Terraform-managed resources, are deleted before destroying the module.
@@ -75,6 +76,7 @@ This module supports three scenarios to create Network resource on AWS. Each wil
   - `flow_log_max_aggregation_interval               = 60`
   - `flow_log_cloudwatch_log_group_retention_in_days = 90`
 
+- **vpc-peering:** VPC peering support is available using submodule `vpc_peering`. Refer [Peering Docs](https://github.com/saturnops/terraform-aws-vpc/tree/main/modules/vpc_peering) for more information
 
 # IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/saturnops/terraform-aws-vpc/blob/main/IAM.md)
