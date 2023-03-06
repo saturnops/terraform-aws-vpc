@@ -6,7 +6,7 @@ locals {
 }
 
 module "vpc_peering" {
-  source               = "saturnops/vpc/aws//modules/vpc-peering"
+  source               = "saturnops/vpc/aws//modules/vpc_peering"
   requester_vpc_region = local.requester_vpc_region
   accepter_vpc_region  = local.accepter_vpc_region
   accepter_vpc_id      = local.accepter_vpc_id
