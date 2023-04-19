@@ -17,12 +17,13 @@ variable "vpc_cidr" {
   type        = string
 }
 
-variable "azs" {
-  description = "List of Availability Zone to be used by VPC"
-  type        = list(any)
+variable "availability_zones" {
+  description = "Number of Availability Zone to be used by VPC Subnets"
+  default     = 2
+  type        = number
 }
 
-variable "enable_public_subnet" {
+variable "public_subnet_enabled" {
   description = "Set true to enable public subnets"
   default     = false
   type        = bool
@@ -34,7 +35,7 @@ variable "public_subnet_cidrs" {
   type        = list(any)
 }
 
-variable "enable_private_subnet" {
+variable "private_subnet_enabled" {
   description = "Set true to enable private subnets"
   default     = false
   type        = bool
@@ -46,7 +47,7 @@ variable "private_subnet_cidrs" {
   type        = list(any)
 }
 
-variable "enable_database_subnet" {
+variable "database_subnet_enabled" {
   description = "Set true to enable database subnets"
   default     = false
   type        = bool
@@ -58,7 +59,7 @@ variable "database_subnet_cidrs" {
   type        = list(any)
 }
 
-variable "enable_intra_subnet" {
+variable "intra_subnet_enabled" {
   description = "Set true to enable intra subnets"
   default     = false
   type        = bool
@@ -78,11 +79,11 @@ variable "vpn_server_enabled" {
 
 variable "vpn_server_instance_type" {
   description = "EC2 instance Type for VPN Server, Only amd64 based instance type are supported eg. t2.medium, t3.micro, c5a.large etc. "
-  default     = "t3a.small"
+  default     = ""
   type        = string
 }
 
-variable "vpn_key_pair" {
+variable "vpn_key_pair_name" {
   description = "Specify the name of AWS Keypair to be used for VPN Server"
   default     = ""
   type        = string
@@ -134,7 +135,7 @@ variable "one_nat_gateway_per_az" {
   type        = bool
 }
 
-variable "enable_flow_log" {
+variable "flow_log_enabled" {
   description = "Whether or not to enable VPC Flow Logs"
   type        = bool
   default     = false

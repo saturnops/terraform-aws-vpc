@@ -58,6 +58,8 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_accepter_vpc_id"></a> [accepter\_vpc\_id](#input\_accepter\_vpc\_id) | The ID of Acceptor VPC | `string` | `""` | no |
 | <a name="input_accepter_vpc_region"></a> [accepter\_vpc\_region](#input\_accepter\_vpc\_region) | The region of Acceptor VPC | `string` | `""` | no |
+| <a name="input_create"></a> [create](#input\_create) | Set it to true to create VPC peering | `bool` | `true` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name for the VPC peering | `string` | `""` | no |
 | <a name="input_requester_vpc_id"></a> [requester\_vpc\_id](#input\_requester\_vpc\_id) | The ID of Requester VPC | `string` | `""` | no |
 | <a name="input_requester_vpc_region"></a> [requester\_vpc\_region](#input\_requester\_vpc\_region) | The region Requester VPC | `string` | `""` | no |
 

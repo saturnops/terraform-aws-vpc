@@ -21,3 +21,16 @@ variable "requester_vpc_region" {
   description = "The region Requester VPC"
   default     = ""
 }
+
+
+variable "create" {
+  description = "Set it to true to create VPC peering"
+  type        = bool
+  default     = true
+}
+
+variable "name" {
+  description = "Name for the VPC peering"
+  type        = string
+  default     = ""
+}
