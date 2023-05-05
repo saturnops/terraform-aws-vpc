@@ -79,7 +79,7 @@ variable "vpn_server_enabled" {
 
 variable "vpn_server_instance_type" {
   description = "EC2 instance Type for VPN Server, Only amd64 based instance type are supported eg. t2.medium, t3.micro, c5a.large etc. "
-  default     = ""
+  default     = "t3a.small"
   type        = string
 }
 
