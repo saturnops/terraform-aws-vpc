@@ -42,6 +42,7 @@ resource "aws_vpc_peering_connection" "this" {
   provider    = aws.peer
   tags = {
     Name = var.name
+    Side = "Requester"
   }
 }
 
@@ -53,6 +54,7 @@ resource "aws_vpc_peering_connection_accepter" "this" {
   auto_accept               = true
   tags = {
     Name = var.name
+    Side = "Accepter"
   }
 }
 

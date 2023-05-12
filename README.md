@@ -99,7 +99,8 @@ To configure Pritunl VPN:
 
 
 
-|--------|---------------|
+
+
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

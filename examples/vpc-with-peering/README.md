@@ -4,13 +4,25 @@ Configuration in this directory creates a VPC peering connection between two VPC
 
 ## Usage
 
-To run this example you need to execute:
+To run this example you need to execute this module in two parts :
 
-```bash
-$ terraform init
-$ terraform plan
-$ terraform apply
-```
+1. Execute the below command to deploy accepter and requester VPC:
+
+    ```bash
+    $ cd vpc-requester-accepter
+    $ terraform init
+    $ terraform plan
+    $ terraform apply
+    ```
+2. Copy the VPC id from the output and update in root (peering) main.tf locals block.
+
+3. Execute the below command for peering of created VPC:
+
+    ```bash
+    $ terraform init
+    $ terraform plan
+    $ terraform apply
+    ```
 
 Note that this example may create resources which can cost money (AWS Elastic IP, for example). Run `terraform destroy` when you don't need these resources.
 

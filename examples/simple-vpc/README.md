@@ -2,7 +2,7 @@
 
 Configuration in this directory creates set of VPC resources which may be sufficient for development environment.
 
-There is a public and private subnet created per availability zone in addition to single NAT Gateway shared between all availability zones.
+There is a public subnet created per availability zone with Internet Gateway and route tables.
 
 [Read more about AWS regions, availability zones and local zones](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-regions-availability-zones).
 
