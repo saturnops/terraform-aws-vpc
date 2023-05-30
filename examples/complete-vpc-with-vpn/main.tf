@@ -1,9 +1,9 @@
 locals {
-  name        = "skaf"
+  name        = "vpc"
   region      = "us-east-1"
   environment = "prod"
   additional_aws_tags = {
-    Owner      = "SaturnOps"
+    Owner      = "Organization_Name"
     Expires    = "Never"
     Department = "Engineering"
   }

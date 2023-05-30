@@ -23,9 +23,7 @@ No requirements.
 
 ## Providers
 
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+No providers.
 
 ## Modules
 
@@ -35,9 +33,7 @@ No requirements.
 
 ## Resources
 
-| Name | Type |
-|------|------|
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
+No resources.
 
 ## Inputs
 
