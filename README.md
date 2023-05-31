@@ -28,6 +28,7 @@ module "vpc" {
   availability_zones                              = 2
   vpn_server_enabled                              = false
   intra_subnet_enabled                            = true
+  auto_assign_public_ip                           = true
   public_subnet_enabled                           = true
   private_subnet_enabled                          = true
   one_nat_gateway_per_az                          = true
@@ -135,6 +136,7 @@ To configure Pritunl VPN:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_auto_assign_public_ip"></a> [auto\_assign\_public\_ip](#input\_auto\_assign\_public\_ip) | Specify true to indicate that instances launched into the subnet should be assigned a public IP address. | `bool` | `false` | no |
 | <a name="input_availability_zones"></a> [availability\_zones](#input\_availability\_zones) | Number of Availability Zone to be used by VPC Subnets | `number` | `2` | no |
 | <a name="input_database_subnet_cidrs"></a> [database\_subnet\_cidrs](#input\_database\_subnet\_cidrs) | Database Tier subnet CIDRs to be created | `list(any)` | `[]` | no |
 | <a name="input_database_subnet_enabled"></a> [database\_subnet\_enabled](#input\_database\_subnet\_enabled) | Set true to enable database subnets | `bool` | `false` | no |

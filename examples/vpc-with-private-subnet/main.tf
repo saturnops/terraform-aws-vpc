@@ -18,5 +18,6 @@ module "vpc" {
   availability_zones     = 2
   public_subnet_enabled  = true
   private_subnet_enabled = true
+  auto_assign_public_ip  = true
 
 }

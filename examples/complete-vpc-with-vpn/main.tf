@@ -28,6 +28,7 @@ module "vpc" {
   vpn_server_enabled                              = false
   intra_subnet_enabled                            = true
   public_subnet_enabled                           = true
+  auto_assign_public_ip                           = true
   private_subnet_enabled                          = true
   one_nat_gateway_per_az                          = true
   database_subnet_enabled                         = true

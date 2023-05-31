@@ -32,7 +32,7 @@ No providers.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_key_pair_vpn"></a> [key\_pair\_vpn](#module\_key\_pair\_vpn) | saturnops/keypair/aws | n/a |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | saturnops/vpc/aws | n/a |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | ../../ | n/a |
 
 ## Resources
 

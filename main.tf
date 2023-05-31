@@ -40,6 +40,7 @@ module "vpc" {
   enable_dns_hostnames                            = true
   flow_log_traffic_type                           = "ALL"
   one_nat_gateway_per_az                          = var.one_nat_gateway_per_az
+  map_public_ip_on_launch                         = var.auto_assign_public_ip
   flow_log_destination_type                       = "cloud-watch-logs"
   manage_default_network_acl                      = true
   default_network_acl_ingress                     = concat(local.nacl_allow_vpc_access_rule, var.default_network_acl_ingress)

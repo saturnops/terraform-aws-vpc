@@ -152,3 +152,9 @@ variable "flow_log_max_aggregation_interval" {
   type        = number
   default     = 60
 }
+
+variable "auto_assign_public_ip" {
+  description = "Specify true to indicate that instances launched into the subnet should be assigned a public IP address."
+  type        = bool
+  default     = false
+}
