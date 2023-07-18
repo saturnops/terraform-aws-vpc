@@ -43,9 +43,11 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_ipv6_vpc_cidr_block"></a> [ipv6\_vpc\_cidr\_block](#output\_ipv6\_vpc\_cidr\_block) | The IPv6 CIDR block |
 | <a name="output_private_subnets"></a> [private\_subnets](#output\_private\_subnets) | List of IDs of private subnets |
 | <a name="output_public_subnets"></a> [public\_subnets](#output\_public\_subnets) | List of IDs of public subnets |
 | <a name="output_region"></a> [region](#output\_region) | AWS Region |
-| <a name="output_vpc_cidr_block"></a> [vpc\_cidr\_block](#output\_vpc\_cidr\_block) | AWS Region |
+| <a name="output_vpc_cidr_block"></a> [vpc\_cidr\_block](#output\_vpc\_cidr\_block) | The CIDR of the VPC |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | The ID of the VPC |
+| <a name="output_vpc_ipv6_association_id"></a> [vpc\_ipv6\_association\_id](#output\_vpc\_ipv6\_association\_id) | The association ID for the IPv6 CIDR block |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
