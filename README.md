@@ -4,7 +4,7 @@
 
 
 <br>
-Terraform module to create Networking resources for workload deployment on AWS Cloud.
+Terraform module designed to create networking resources on the AWS Cloud, supporting both IPv4 and dual stack IP modes for workload deployment.
 
 ## Usage Example
 
@@ -23,6 +23,7 @@ module "vpc" {
   name                                            = "skaf"
   vpc_cidr                                        = "10.0.0.0/16"
   environment                                     = "production"
+  ipv6_enabled                                    = true
   flow_log_enabled                                = true
   vpn_key_pair_name                               = module.key_pair_vpn.key_pair_name
   availability_zones                              = 2

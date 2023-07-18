@@ -17,7 +17,7 @@ locals {
     }
 
   ]
-  enable_ipv6 = var.ipv6_enabled 
+  enable_ipv6 = var.ipv6_enabled
   public_subnet_assign_ipv6_address_on_creation = var.public_subnet_assign_ipv6_address_on_creation == true  && var.ipv6_enabled == true ? true : false
   private_subnet_assign_ipv6_address_on_creation = var.private_subnet_assign_ipv6_address_on_creation == true  && var.ipv6_enabled == true ? true : false
   database_subnet_assign_ipv6_address_on_creation = var.database_subnet_assign_ipv6_address_on_creation == true  && var.ipv6_enabled == true ? true : false
@@ -149,4 +149,3 @@ module "vpn_server" {
   public_subnet            = module.vpc.public_subnets[0]
   vpn_server_instance_type = var.vpn_server_instance_type
 }
-

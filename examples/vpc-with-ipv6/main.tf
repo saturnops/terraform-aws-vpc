@@ -8,6 +8,7 @@ locals {
     Department = "Engineering"
   }
   vpc_cidr = "10.10.0.0/16"
+  ipv6_enabled = true
 }
 
 module "vpc" {
@@ -21,10 +22,10 @@ module "vpc" {
   intra_subnet_enabled  = false
   database_subnet_enabled = false
   auto_assign_public_ip  = true
-  ipv6_enabled = true
+  ipv6_enabled = local.ipv6_enabled
   public_subnet_assign_ipv6_address_on_creation = true
   private_subnet_assign_ipv6_address_on_creation = true
   database_subnet_assign_ipv6_address_on_creation = true
-  intra_subnet_assign_ipv6_address_on_creation = true 
+  intra_subnet_assign_ipv6_address_on_creation = true
 
 }
