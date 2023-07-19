@@ -38,3 +38,13 @@ output "vpn_security_group" {
   description = "Security Group ID of VPN Server"
   value       = var.vpn_server_enabled ? module.vpn_server[0].vpn_security_group : null
 }
+
+output "vpc_ipv6_association_id" {
+  description = "The association ID for the IPv6 CIDR block"
+  value       = module.vpc.vpc_ipv6_association_id
+}
+
+output "ipv6_vpc_cidr_block" {
+  description = "The IPv6 CIDR block"
+  value       = module.vpc.vpc_ipv6_cidr_block
+}
