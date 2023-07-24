@@ -77,12 +77,15 @@ This module supports three scenarios to create Network resource on AWS. Each wil
 
 - **vpc-peering:** VPC peering support is available using submodule `vpc_peering`. Refer [Peering Docs](https://github.com/saturnops/terraform-aws-vpc/tree/main/modules/vpc_peering) for more information
 
+- **vpc-with-ipv6:** To create VPC with IPv6 support, you only need to enable the parameter `ipv6_enabled`. Rest all the configurations will be taken care by module. Refer for example [vpc-with-ipv6](https://github.com/saturnops/terraform-aws-vpc/tree/main/examples/vpc-with-ipv6) for more information.
+
+
 # IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/saturnops/terraform-aws-vpc/blob/main/IAM.md)
 
 
-
 # VPN setup
+We are using Pritunl as VPN. It is using Ubuntu 22.04 image as underlying OS.
 To configure Pritunl VPN:
 
       1. Access the Pritunl UI over HTTPS using the public IP of EC2 instance in browser
@@ -95,8 +98,6 @@ To configure Pritunl VPN:
       8. Attach organization to the server and Start the server.
       9. Copy or download user profile link or file.
      10. Import the profile in Pritunl client.
-
-    NOTE: Port 80 should be open publicly in the vpn security group to verify and renewing the domain certificate.
 
 
 

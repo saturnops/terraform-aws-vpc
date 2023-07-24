@@ -20,6 +20,13 @@ module "security_group_vpn" {
       cidr_blocks = "0.0.0.0/0"
     },
     {
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      description = "Public HTTP access"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
       from_port   = 10150
       to_port     = 10150
       protocol    = "udp"
@@ -58,7 +65,7 @@ data "aws_ami" "ubuntu_20_ami" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-*-22.04-amd64-server-*"]
   }
 
   filter {
@@ -139,9 +146,9 @@ resource "aws_iam_instance_profile" "vpn_SSM" {
   role = join("", aws_iam_role.vpn_role[*].name)
 }
 
-resource "time_sleep" "wait_2_min" {
+resource "time_sleep" "wait_3_min" {
   depends_on      = [module.vpn_server]
-  create_duration = "2m"
+  create_duration = "3m"
 }
 
 data "aws_iam_policy" "SecretsManagerReadWrite" {
@@ -155,7 +162,7 @@ resource "aws_iam_role_policy_attachment" "SecretsManagerReadWrite_attachment" {
 
 resource "aws_ssm_association" "ssm_association" {
   name       = aws_ssm_document.ssm_document.name
-  depends_on = [time_sleep.wait_2_min]
+  depends_on = [time_sleep.wait_3_min]
   targets {
     key    = "InstanceIds"
     values = [module.vpn_server.id]
@@ -164,7 +171,7 @@ resource "aws_ssm_association" "ssm_association" {
 
 resource "aws_ssm_document" "ssm_document" {
   name          = format("%s-%s-%s", var.environment, var.name, "ssm_document_create_secret")
-  depends_on    = [time_sleep.wait_2_min]
+  depends_on    = [time_sleep.wait_3_min]
   document_type = "Command"
   content       = <<DOC
   {
@@ -184,7 +191,9 @@ resource "aws_ssm_document" "ssm_document" {
          "inputs": {
             "runCommand": [
                "SETUPKEY=$(sudo pritunl setup-key)",
+               "sleep 60",
                "PASSWORD=$(sudo pritunl default-password | grep password | awk '{ print $2 }' | tail -n1)",
+               "sleep 60",
                "aws secretsmanager create-secret --region ${data.aws_region.current.name} --name ${var.environment}-${var.name}-vpn --secret-string \"{\\\"user\\\": \\\"pritunl\\\", \\\"password\\\": $PASSWORD, \\\"setup-key\\\": \\\"$SETUPKEY\\\"}\""
             ]
          }
@@ -192,4 +201,19 @@ resource "aws_ssm_document" "ssm_document" {
    ]
 }
 DOC
+}
+
+resource "null_resource" "delete_secret" {
+  triggers = {
+    environment = var.environment
+    name = var.name
+    region = data.aws_region.current.name
+  }
+  provisioner "local-exec" {
+    when = destroy
+    interpreter = ["/bin/bash", "-c"]
+    command     = <<EOT
+    aws secretsmanager delete-secret --secret-id ${self.triggers.environment}-${self.triggers.name}-vpn --force-delete-without-recovery --region ${self.triggers.region}
+    EOT
+  }
 }
