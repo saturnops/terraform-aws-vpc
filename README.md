@@ -77,7 +77,7 @@ This module supports three scenarios to create Network resource on AWS. Each wil
 
 - **vpc-peering:** VPC peering support is available using submodule `vpc_peering`. Refer [Peering Docs](https://github.com/saturnops/terraform-aws-vpc/tree/main/modules/vpc_peering) for more information
 
-- **vpc-with-ipv6:** To create VPC with IPv6 support just you have to enable the parameter ipv6_enabled. Rest all the things will be taken care by module. Refer for example `vpc-with-ipv6`. Refer [Peering Docs](https://github.com/Ad-saturnops/terraform-aws-vpc/tree/main/examples/vpc-with-ipv6) for more information
+- **vpc-with-ipv6:** To create VPC with IPv6 support, you only need to enable the parameter 'ipv6_enabled'. Rest all the configurations will be taken care by module. Refer for example `vpc-with-ipv6`. Refer [Peering Docs](https://github.com/Ad-saturnops/terraform-aws-vpc/tree/main/examples/vpc-with-ipv6) for more information
 
 
 # IAM Permissions
