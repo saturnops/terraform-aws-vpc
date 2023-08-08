@@ -35,7 +35,7 @@ data "aws_ec2_instance_type" "arch" {
 
 module "vpc" {
   source                                          = "terraform-aws-modules/vpc/aws"
-  version                                         = "4.0.2"
+  version                                         = "5.1.1"
   name                                            = format("%s-%s-vpc", var.environment, var.name)
   cidr                                            = var.vpc_cidr # CIDR FOR VPC
   azs                                             = [for n in range(0, var.availability_zones) : data.aws_availability_zones.available.names[n]]

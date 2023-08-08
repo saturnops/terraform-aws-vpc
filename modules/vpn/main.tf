@@ -1,5 +1,5 @@
 resource "aws_eip" "vpn" {
-  vpc      = true
+  domain   = "vpc"
   instance = module.vpn_server.id
 }
 
