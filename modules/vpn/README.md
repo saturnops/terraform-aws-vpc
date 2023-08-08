@@ -25,6 +25,7 @@ Refer [this](https://pritunl.com/) for more information.
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.23 |
+| <a name="provider_null"></a> [null](#provider\_null) | n/a |
 | <a name="provider_template"></a> [template](#provider\_template) | >= 2.2.0 |
 | <a name="provider_time"></a> [time](#provider\_time) | >= 0.9.1 |
 
@@ -46,7 +47,8 @@ Refer [this](https://pritunl.com/) for more information.
 | [aws_iam_role_policy_attachment.SecretsManagerReadWrite_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_ssm_association.ssm_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_association) | resource |
 | [aws_ssm_document.ssm_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_document) | resource |
-| [time_sleep.wait_2_min](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
+| [null_resource.delete_secret](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [time_sleep.wait_3_min](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [aws_ami.ubuntu_20_ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_iam_policy.SSMManagedInstanceCore](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
 | [aws_iam_policy.SecretsManagerReadWrite](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
