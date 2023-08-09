@@ -55,30 +55,52 @@ This module supports three scenarios to create Network resource on AWS. Each wil
 
 - **simple-vpc (default behavior):** To create a VPC with public subnets and IGW.
   - `vpc_cidr       = ""`
-  - `enable_public_subnet = true`
+  - `public_subnet_enabled = true`
+  - `auto_assign_public_ip = true`
 - **vpc-with-private-sub:** To create a VPC with public subnets, private subnets, IGW gateway and NAT gateway.
   - `vpc_cidr              = ""`
   - `public_subnet_enabled  = true`
   - `private_subnet_enabled = true`
+  - `auto_assign_public_ip = true`
 
 - **complete-vpc-with-vpn:** To create a VPC with public, private, database and intra subnets along with an IGW and NAT gateway. Jump server/Bastion Host is also configured.
-  - `vpc_cidr               = ""`
+  - `vpc_cidr                = ""`
   - `public_subnet_enabled   = true`
   - `private_subnet_enabled  = true`
   - `database_subnet_enabled = true`
   - `intra_subnet_enabled    = true`
+  - `auto_assign_public_ip  = true`
   - `one_nat_gateway_per_az = true`
   - `vpn_server_enabled     = true`
   - `vpn_server_instance_type = "t3a.small"`
-  - `vpn_key_pair             = ""`
+  - `vpn_key_pair_name         = ""`
+  - `availability_zones        = 2`
   - `flow_log_enabled          = true`
   - `flow_log_max_aggregation_interval               = 60`
   - `flow_log_cloudwatch_log_group_retention_in_days = 90`
 
 - **vpc-peering:** VPC peering support is available using submodule `vpc_peering`. Refer [Peering Docs](https://github.com/saturnops/terraform-aws-vpc/tree/main/modules/vpc_peering) for more information
+  - `accepter_name          = ""`
+  - `accepter_vpc_id        = ""`
+  - `accepter_vpc_region    = ""`
+  - `requester_name         = ""`
+  - `requester_vpc_id       = ""`
+  - `requester_vpc_region   = ""`
+  - `auto_assign_public_ip  = true`
+  - `one_nat_gateway_per_az = true`
 
 - **vpc-with-ipv6:** To create VPC with IPv6 support, you only need to enable the parameter `ipv6_enabled`. Rest all the configurations will be taken care by module. Refer for example [vpc-with-ipv6](https://github.com/saturnops/terraform-aws-vpc/tree/main/examples/vpc-with-ipv6) for more information.
-
+  - `vpc_cidr                = ""`
+  - `public_subnet_enabled   = true`
+  - `private_subnet_enabled  = true`
+  - `database_subnet_enabled = true`
+  - `intra_subnet_enabled    = true`
+  - `auto_assign_public_ip  = true`
+  - `ipv6_enabled = true`
+  - `public_subnet_assign_ipv6_address_on_creation   = true`
+  - `private_subnet_assign_ipv6_address_on_creation  = true`
+  - `database_subnet_assign_ipv6_address_on_creation = true`
+  - `intra_subnet_assign_ipv6_address_on_creation    = true`
 
 # IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/saturnops/terraform-aws-vpc/blob/main/IAM.md)
