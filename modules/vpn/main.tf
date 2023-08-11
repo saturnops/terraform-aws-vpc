@@ -1,5 +1,5 @@
 resource "aws_eip" "vpn" {
-  vpc      = true
+  domain   = "vpc"
   instance = module.vpn_server.id
 }
 
@@ -206,11 +206,11 @@ DOC
 resource "null_resource" "delete_secret" {
   triggers = {
     environment = var.environment
-    name = var.name
-    region = data.aws_region.current.name
+    name        = var.name
+    region      = data.aws_region.current.name
   }
   provisioner "local-exec" {
-    when = destroy
+    when        = destroy
     interpreter = ["/bin/bash", "-c"]
     command     = <<EOT
     aws secretsmanager delete-secret --secret-id ${self.triggers.environment}-${self.triggers.name}-vpn --force-delete-without-recovery --region ${self.triggers.region}
