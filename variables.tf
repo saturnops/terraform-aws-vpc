@@ -191,3 +191,9 @@ variable "intra_subnet_assign_ipv6_address_on_creation" {
   type        = bool
   default     = null
 }
+
+variable "flow_log_cloudwatch_log_group_kms_key_arn" {
+  description = "The ARN of the KMS Key to use when encrypting log data for VPC flow logs"
+  type        = string
+  default     = null
+}

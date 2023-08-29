@@ -63,6 +63,7 @@ module "vpc" {
   create_flow_log_cloudwatch_log_group            = local.create_flow_log_cloudwatch_log_group
   flow_log_max_aggregation_interval               = var.flow_log_max_aggregation_interval
   flow_log_cloudwatch_log_group_retention_in_days = var.flow_log_cloudwatch_log_group_retention_in_days
+  flow_log_cloudwatch_log_group_kms_key_id        = var.flow_log_cloudwatch_log_group_kms_key_arn
   enable_ipv6                                     = local.enable_ipv6
   #assign_ipv6_address_on_creation = local.assign_ipv6_address_on_creation
   public_subnet_assign_ipv6_address_on_creation   = local.public_subnet_assign_ipv6_address_on_creation

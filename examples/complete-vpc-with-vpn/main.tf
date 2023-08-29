@@ -35,4 +35,5 @@ module "vpc" {
   vpn_server_instance_type                        = "t3a.small"
   flow_log_max_aggregation_interval               = 60
   flow_log_cloudwatch_log_group_retention_in_days = 90
+  flow_log_cloudwatch_log_group_kms_key_arn       = "" #Enter your kms key arn
 }
