@@ -19,8 +19,8 @@ variable "vpc_cidr" {
 
 variable "availability_zones" {
   description = "Number of Availability Zone to be used by VPC Subnets"
-  default     = 2
-  type        = number
+  default     = []
+  type        = list(any)
 }
 
 variable "public_subnet_enabled" {

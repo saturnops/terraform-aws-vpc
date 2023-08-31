@@ -16,7 +16,7 @@ module "vpc" {
   name                                            = local.name
   vpc_cidr                                        = local.vpc_cidr
   environment                                     = local.environment
-  availability_zones                              = 2
+  availability_zones                              = ["us-east-1a", "us-east-1b"]
   public_subnet_enabled                           = true
   private_subnet_enabled                          = true
   intra_subnet_enabled                            = false
