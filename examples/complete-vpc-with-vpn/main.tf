@@ -22,9 +22,9 @@ module "vpc" {
   name                                            = local.name
   vpc_cidr                                        = local.vpc_cidr
   environment                                     = local.environment
-  flow_log_enabled                                = true
+  flow_log_enabled                                = false
   vpn_key_pair_name                               = module.key_pair_vpn.key_pair_name
-  availability_zones                              = 2
+  availability_zones                              = ["us-east-1a", "us-east-1b"]
   vpn_server_enabled                              = false
   intra_subnet_enabled                            = true
   public_subnet_enabled                           = true
@@ -35,4 +35,5 @@ module "vpc" {
   vpn_server_instance_type                        = "t3a.small"
   flow_log_max_aggregation_interval               = 60
   flow_log_cloudwatch_log_group_retention_in_days = 90
+  flow_log_cloudwatch_log_group_kms_key_arn       = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn" #Enter your kms key arn
 }

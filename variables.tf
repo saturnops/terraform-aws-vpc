@@ -19,8 +19,8 @@ variable "vpc_cidr" {
 
 variable "availability_zones" {
   description = "Number of Availability Zone to be used by VPC Subnets"
-  default     = 2
-  type        = number
+  default     = []
+  type        = list(any)
 }
 
 variable "public_subnet_enabled" {
@@ -189,5 +189,11 @@ variable "database_subnet_assign_ipv6_address_on_creation" {
 variable "intra_subnet_assign_ipv6_address_on_creation" {
   description = "Assign IPv6 address on intra subnet, must be disabled to change IPv6 CIDRs. This is the IPv6 equivalent of map_public_ip_on_launch"
   type        = bool
+  default     = null
+}
+
+variable "flow_log_cloudwatch_log_group_kms_key_arn" {
+  description = "The ARN of the KMS Key to use when encrypting log data for VPC flow logs"
+  type        = string
   default     = null
 }

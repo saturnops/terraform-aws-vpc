@@ -1,8 +1,9 @@
 locals {
-  intra_subnets                        = var.intra_subnet_enabled ? length(var.intra_subnet_cidrs) > 0 ? var.intra_subnet_cidrs : [for netnum in range(var.availability_zones * 3, var.availability_zones * 4) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
-  public_subnets                       = var.public_subnet_enabled ? length(var.public_subnet_cidrs) > 0 ? var.public_subnet_cidrs : [for netnum in range(0, var.availability_zones) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
-  private_subnets                      = var.private_subnet_enabled ? length(var.private_subnet_cidrs) > 0 ? var.private_subnet_cidrs : [for netnum in range(var.availability_zones, var.availability_zones * 2) : cidrsubnet(var.vpc_cidr, 4, netnum)] : []
-  database_subnets                     = var.database_subnet_enabled ? length(var.database_subnet_cidrs) > 0 ? var.database_subnet_cidrs : [for netnum in range(var.availability_zones * 2, var.availability_zones * 3) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
+  azs                                  = length(var.availability_zones)
+  intra_subnets                        = var.intra_subnet_enabled ? length(var.intra_subnet_cidrs) > 0 ? var.intra_subnet_cidrs : [for netnum in range(local.azs * 3, local.azs * 4) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
+  public_subnets                       = var.public_subnet_enabled ? length(var.public_subnet_cidrs) > 0 ? var.public_subnet_cidrs : [for netnum in range(0, local.azs) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
+  private_subnets                      = var.private_subnet_enabled ? length(var.private_subnet_cidrs) > 0 ? var.private_subnet_cidrs : [for netnum in range(local.azs, local.azs * 2) : cidrsubnet(var.vpc_cidr, 4, netnum)] : []
+  database_subnets                     = var.database_subnet_enabled ? length(var.database_subnet_cidrs) > 0 ? var.database_subnet_cidrs : [for netnum in range(local.azs * 2, local.azs * 3) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
   single_nat_gateway                   = var.one_nat_gateway_per_az == true ? false : true
   create_database_subnet_route_table   = var.database_subnet_enabled
   create_flow_log_cloudwatch_log_group = var.flow_log_enabled == true ? true : false
@@ -23,10 +24,10 @@ locals {
   database_subnet_assign_ipv6_address_on_creation = var.database_subnet_assign_ipv6_address_on_creation == true && var.ipv6_enabled == true ? true : false
   intra_subnet_assign_ipv6_address_on_creation    = var.intra_subnet_assign_ipv6_address_on_creation == true && var.ipv6_enabled == true ? true : false
 
-  public_subnet_ipv6_prefixes   = var.public_subnet_enabled ? [for i in range(var.availability_zones) : i] : []
-  private_subnet_ipv6_prefixes  = var.private_subnet_enabled ? [for i in range(var.availability_zones) : i + length(data.aws_availability_zones.available.names)] : []
-  database_subnet_ipv6_prefixes = var.database_subnet_enabled ? [for i in range(var.availability_zones) : i + 2 * length(data.aws_availability_zones.available.names)] : []
-  intra_subnet_ipv6_prefixes    = var.intra_subnet_enabled ? [for i in range(var.availability_zones) : i + 3 * length(data.aws_availability_zones.available.names)] : []
+  public_subnet_ipv6_prefixes   = var.public_subnet_enabled ? [for i in range(local.azs) : i] : []
+  private_subnet_ipv6_prefixes  = var.private_subnet_enabled ? [for i in range(local.azs) : i + length(data.aws_availability_zones.available.names)] : []
+  database_subnet_ipv6_prefixes = var.database_subnet_enabled ? [for i in range(local.azs) : i + 2 * length(data.aws_availability_zones.available.names)] : []
+  intra_subnet_ipv6_prefixes    = var.intra_subnet_enabled ? [for i in range(local.azs) : i + 3 * length(data.aws_availability_zones.available.names)] : []
 }
 data "aws_availability_zones" "available" {}
 data "aws_ec2_instance_type" "arch" {
@@ -38,7 +39,7 @@ module "vpc" {
   version                                         = "5.1.1"
   name                                            = format("%s-%s-vpc", var.environment, var.name)
   cidr                                            = var.vpc_cidr # CIDR FOR VPC
-  azs                                             = [for n in range(0, var.availability_zones) : data.aws_availability_zones.available.names[n]]
+  azs                                             = [for n in range(0, local.azs) : data.aws_availability_zones.available.names[n]]
   intra_subnets                                   = local.intra_subnets
   public_subnets                                  = local.public_subnets
   private_subnets                                 = local.private_subnets
@@ -63,6 +64,7 @@ module "vpc" {
   create_flow_log_cloudwatch_log_group            = local.create_flow_log_cloudwatch_log_group
   flow_log_max_aggregation_interval               = var.flow_log_max_aggregation_interval
   flow_log_cloudwatch_log_group_retention_in_days = var.flow_log_cloudwatch_log_group_retention_in_days
+  flow_log_cloudwatch_log_group_kms_key_id        = var.flow_log_cloudwatch_log_group_kms_key_arn
   enable_ipv6                                     = local.enable_ipv6
   #assign_ipv6_address_on_creation = local.assign_ipv6_address_on_creation
   public_subnet_assign_ipv6_address_on_creation   = local.public_subnet_assign_ipv6_address_on_creation
