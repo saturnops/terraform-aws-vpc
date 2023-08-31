@@ -37,6 +37,7 @@ module "vpc" {
   vpn_server_instance_type                        = "t3a.small"
   flow_log_max_aggregation_interval               = 60
   flow_log_cloudwatch_log_group_retention_in_days = 90
+  flow_log_cloudwatch_log_group_kms_key_arn       = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn" #Enter your kms key arn
 }
 ```
 Refer [this](https://github.com/saturnops/terraform-aws-vpc/tree/main/examples) for more examples.
@@ -114,6 +115,7 @@ This module supports three scenarios to create Network resource on AWS. Each wil
   - `flow_log_enabled          = true`
   - `flow_log_max_aggregation_interval               = 60`
   - `flow_log_cloudwatch_log_group_retention_in_days = 90`
+  - `flow_log_cloudwatch_log_group_kms_key_arn       = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"`
 
 - **vpc-peering:** VPC peering support is available using submodule `vpc_peering`. Refer [Peering Docs](https://github.com/saturnops/terraform-aws-vpc/tree/main/modules/vpc_peering) for more information
   - `accepter_name          = ""`
@@ -197,12 +199,13 @@ To configure Pritunl VPN:
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_auto_assign_public_ip"></a> [auto\_assign\_public\_ip](#input\_auto\_assign\_public\_ip) | Specify true to indicate that instances launched into the subnet should be assigned a public IP address. | `bool` | `false` | no |
-| <a name="input_availability_zones"></a> [availability\_zones](#input\_availability\_zones) | Number of Availability Zone to be used by VPC Subnets | `number` | `2` | no |
+| <a name="input_availability_zones"></a> [availability\_zones](#input\_availability\_zones) | Number of Availability Zone to be used by VPC Subnets | `list(any)` | `[]` | no |
 | <a name="input_database_subnet_assign_ipv6_address_on_creation"></a> [database\_subnet\_assign\_ipv6\_address\_on\_creation](#input\_database\_subnet\_assign\_ipv6\_address\_on\_creation) | Assign IPv6 address on database subnet, must be disabled to change IPv6 CIDRs. This is the IPv6 equivalent of map\_public\_ip\_on\_launch | `bool` | `null` | no |
 | <a name="input_database_subnet_cidrs"></a> [database\_subnet\_cidrs](#input\_database\_subnet\_cidrs) | Database Tier subnet CIDRs to be created | `list(any)` | `[]` | no |
 | <a name="input_database_subnet_enabled"></a> [database\_subnet\_enabled](#input\_database\_subnet\_enabled) | Set true to enable database subnets | `bool` | `false` | no |
 | <a name="input_default_network_acl_ingress"></a> [default\_network\_acl\_ingress](#input\_default\_network\_acl\_ingress) | List of maps of ingress rules to set on the Default Network ACL | `list(map(string))` | <pre>[<br>  {<br>    "action": "deny",<br>    "cidr_block": "0.0.0.0/0",<br>    "from_port": 22,<br>    "protocol": "tcp",<br>    "rule_no": 98,<br>    "to_port": 22<br>  },<br>  {<br>    "action": "deny",<br>    "cidr_block": "0.0.0.0/0",<br>    "from_port": 3389,<br>    "protocol": "tcp",<br>    "rule_no": 99,<br>    "to_port": 3389<br>  },<br>  {<br>    "action": "allow",<br>    "cidr_block": "0.0.0.0/0",<br>    "from_port": 0,<br>    "protocol": "-1",<br>    "rule_no": 100,<br>    "to_port": 0<br>  },<br>  {<br>    "action": "allow",<br>    "from_port": 0,<br>    "ipv6_cidr_block": "::/0",<br>    "protocol": "-1",<br>    "rule_no": 101,<br>    "to_port": 0<br>  }<br>]</pre> | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Specify the environment indentifier for the VPC | `string` | `""` | no |
+| <a name="input_flow_log_cloudwatch_log_group_kms_key_arn"></a> [flow\_log\_cloudwatch\_log\_group\_kms\_key\_arn](#input\_flow\_log\_cloudwatch\_log\_group\_kms\_key\_arn) | The ARN of the KMS Key to use when encrypting log data for VPC flow logs | `string` | `null` | no |
 | <a name="input_flow_log_cloudwatch_log_group_retention_in_days"></a> [flow\_log\_cloudwatch\_log\_group\_retention\_in\_days](#input\_flow\_log\_cloudwatch\_log\_group\_retention\_in\_days) | Specifies the number of days you want to retain log events in the specified log group for VPC flow logs. | `number` | `null` | no |
 | <a name="input_flow_log_enabled"></a> [flow\_log\_enabled](#input\_flow\_log\_enabled) | Whether or not to enable VPC Flow Logs | `bool` | `false` | no |
 | <a name="input_flow_log_max_aggregation_interval"></a> [flow\_log\_max\_aggregation\_interval](#input\_flow\_log\_max\_aggregation\_interval) | The maximum interval of time during which a flow of packets is captured and aggregated into a flow log record. Valid Values: `60` seconds or `600` seconds. | `number` | `60` | no |
