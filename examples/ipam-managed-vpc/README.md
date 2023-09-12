@@ -31,7 +31,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_vpc_ipam"></a> [vpc\_ipam](#module\_vpc\_ipam) | ../.. | n/a |
+| <a name="module_vpc_ipam"></a> [vpc\_ipam](#module\_vpc\_ipam) | saturnops/vpc/aws | n/a |
 
 ## Resources
 

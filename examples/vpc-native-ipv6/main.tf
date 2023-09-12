@@ -1,6 +1,6 @@
 locals {
   name        = "skaf"
-  region      = "ap-south-1"
+  region      = "us-east-1"
   environment = "stage"
   additional_aws_tags = {
     Owner      = "SaturnOps"
@@ -13,7 +13,7 @@ locals {
 }
 
 module "vpc" {
-  source                                          = "../.."
+  source                                          = "saturnops/vpc/aws"
   name                                            = local.name
   vpc_cidr                                        = local.vpc_cidr
   ipv6_only                                       = local.ipv6_only

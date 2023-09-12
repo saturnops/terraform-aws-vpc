@@ -29,7 +29,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | ../.. | n/a |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | saturnops/vpc/aws | n/a |
 
 ## Resources
 

@@ -12,7 +12,7 @@ locals {
 }
 
 module "vpc_ipam" {
-  source = "../.."
+  source = "saturnops/vpc/aws"
 
   name = local.name
 
