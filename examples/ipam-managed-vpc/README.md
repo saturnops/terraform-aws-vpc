@@ -1,7 +1,10 @@
-# VPC with Multiple CIDR Supports
+# IPAM VPC
 
+Configuration in this directory creates set of VPC resources with IPAM managed CIDRs
 
-MUltiple CIDRs can be attached with a VPC in addition of increasing numbers of IPs. A public and private subnet will be created per availability zone in addition to single NAT Gateway shared between all availability zones.
+IPAM pool with desired CIDR and its allocation which restricts the overlapping of CIDRs
+
+[Read more about AWS regions, availability zones and local zones](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-regions-availability-zones).
 
 ## Usage
 
@@ -14,7 +17,6 @@ $ terraform apply
 ```
 
 Note that this example may create resources which can cost money (AWS Elastic IP, for example). Run `terraform destroy` when you don't need these resources.
-
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -29,7 +31,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | ../.. | n/a |
+| <a name="module_vpc_ipam"></a> [vpc\_ipam](#module\_vpc\_ipam) | ../.. | n/a |
 
 ## Resources
 
@@ -43,10 +45,8 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_private_subnets"></a> [private\_subnets](#output\_private\_subnets) | List of IDs of private subnets |
 | <a name="output_public_subnets"></a> [public\_subnets](#output\_public\_subnets) | List of IDs of public subnets |
 | <a name="output_region"></a> [region](#output\_region) | AWS Region |
 | <a name="output_vpc_cidr_block"></a> [vpc\_cidr\_block](#output\_vpc\_cidr\_block) | AWS Region |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | The ID of the VPC |
-| <a name="output_vpc_secondary_cidr_blocks"></a> [vpc\_secondary\_cidr\_blocks](#output\_vpc\_secondary\_cidr\_blocks) | List of secondary CIDR blocks of the VPC |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

@@ -1,5 +1,6 @@
 locals {
   azs                   = length(var.availability_zones)
+  region_name           = var.region
   public_subnets_native = var.public_subnet_enabled ? length(var.public_subnet_cidrs) > 0 ? var.public_subnet_cidrs : [for netnum in range(0, local.azs) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
   secondary_public_subnets = var.public_subnet_enabled && var.secondry_cidr_enabled ? [
     for cidr_block in var.secondary_cidr_blocks : [
@@ -69,6 +70,9 @@ module "vpc" {
   name                                            = format("%s-%s-vpc", var.environment, var.name)
   cidr                                            = var.vpc_cidr # CIDR FOR VPC
   azs                                             = [for n in range(0, local.azs) : data.aws_availability_zones.available.names[n]]
+  use_ipam_pool                                   = var.ipam_enabled ? true : false
+  ipv4_ipam_pool_id                               = var.create_ipam_pool ? aws_vpc_ipam_pool.ipam_pool[0].id : var.ipam_pool_id
+  ipv4_netmask_length                             = var.ipv4_netmask_length
   create_database_subnet_group                    = length(local.database_subnets) > 1 && var.enable_database_subnet_group ? true : false
   intra_subnets                                   = local.intra_subnets
   public_subnets                                  = local.public_subnets
@@ -186,3 +190,52 @@ module "vpn_server" {
   public_subnet            = module.vpc.public_subnets[0]
   vpn_server_instance_type = var.vpn_server_instance_type
 }
+
+resource "aws_vpc_ipam" "ipam" {
+  count = var.ipam_enabled && var.create_ipam_pool ? 1 : 0
+  operating_regions {
+    region_name = local.region_name
+  }
+
+  #tags = var.tags
+}
+
+# IPv4
+resource "aws_vpc_ipam_pool" "ipam_pool" {
+  count                             = var.ipam_enabled && var.create_ipam_pool ? 1 : 0
+  description                       = "IPv4 pool"
+  address_family                    = "ipv4"
+  ipam_scope_id                     = aws_vpc_ipam.ipam[0].private_default_scope_id
+  locale                            = local.region_name
+  allocation_default_netmask_length = 16
+
+  #tags = var.tags
+}
+
+resource "aws_vpc_ipam_pool_cidr" "ipam_pool_cidr" {
+  count        = var.ipam_enabled ? 1 : 0
+  ipam_pool_id = var.create_ipam_pool ? aws_vpc_ipam_pool.ipam_pool[0].id : var.ipam_pool_id
+  cidr         = var.create_ipam_pool ? var.vpc_cidr : var.existing_ipam_managed_cidr
+}
+
+# resource "aws_vpc_ipam_preview_next_cidr" "this" {
+#   ipam_pool_id = aws_vpc_ipam_pool.this.id
+
+#   depends_on = [
+#     aws_vpc_ipam_pool_cidr.this
+#   ]
+# }
+
+# IPv6
+# resource "aws_vpc_ipam_pool" "ipv6" {
+#   count =
+#   description                       = "IPv6 pool"
+#   address_family                    = "ipv6"
+#   ipam_scope_id                     = aws_vpc_ipam.this.public_default_scope_id
+#   locale                            = var.region
+#   allocation_default_netmask_length = 56
+#   publicly_advertisable             = false
+#   aws_service                       = "ec2"
+
+#   #tags = var.tags
+# }

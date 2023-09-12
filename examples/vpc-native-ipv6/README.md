@@ -1,7 +1,7 @@
-# VPC with IPv6 support
+# VPC with Native IPv6 support
 
 
-VPC with dual stack IP mode enabled IPv6 and IPv4 includes public and private subnet will be created per availability zone in addition to single NAT Gateway shared between all availability zones.
+VPC with native IPv6 which includes public and private subnet will be created per availability zone in addition to single NAT Gateway shared between all availability zones.
 
 ## Usage
 
