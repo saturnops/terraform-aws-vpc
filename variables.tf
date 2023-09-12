@@ -221,3 +221,44 @@ variable "enable_database_subnet_group" {
   default     = false
   type        = bool
 }
+
+# variable "tags" {
+#   description = "The Tags attached with the resources"
+#   default = {}
+#   type = any
+# }
+
+variable "ipam_pool_id" {
+  description = "The existing IPAM pool id if any"
+  default     = null
+  type        = string
+}
+
+variable "ipam_enabled" {
+  description = "Whether enable IPAM managed VPC or not"
+  default     = false
+  type        = bool
+}
+
+variable "create_ipam_pool" {
+  description = "Whether create new IPAM pool"
+  default     = true
+  type        = bool
+}
+
+variable "ipv4_netmask_length" {
+  description = "The netmask length for IPAM managed VPC"
+  default     = 16
+  type        = number
+}
+
+variable "region" {
+  description = "The AWS region name"
+  type        = string
+}
+
+variable "existing_ipam_managed_cidr" {
+  description = "The existing IPAM pool CIDR"
+  default     = ""
+  type        = string
+}
