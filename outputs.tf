@@ -48,3 +48,8 @@ output "ipv6_vpc_cidr_block" {
   description = "The IPv6 CIDR block"
   value       = module.vpc.vpc_ipv6_cidr_block
 }
+
+output "vpc_secondary_cidr_blocks" {
+  description = "List of secondary CIDR blocks of the VPC"
+  value       = module.vpc.vpc_secondary_cidr_blocks
+}

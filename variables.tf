@@ -197,3 +197,27 @@ variable "flow_log_cloudwatch_log_group_kms_key_arn" {
   type        = string
   default     = null
 }
+
+variable "ipv6_only" {
+  description = "Enable it for deploying native IPv6 network"
+  type        = bool
+  default     = false
+}
+
+variable "secondary_cidr_blocks" {
+  description = "List of the secondary CIDR blocks which can be at most 5"
+  type        = list(string)
+  default     = []
+}
+
+variable "secondry_cidr_enabled" {
+  description = "Whether enable secondary CIDR with VPC"
+  default     = false
+  type        = bool
+}
+
+variable "enable_database_subnet_group" {
+  description = "Whether create database subnet groups"
+  default     = false
+  type        = bool
+}
