@@ -28,11 +28,7 @@ locals {
       for netnum in range(local.azs * 2, local.azs * 3) : cidrsubnet(cidr_block, 8, netnum)
     ]
   ] : []
-  database_subnets = concat(local.database_subnets_native, flatten(local.secondary_database_subnets))
-  #intra_subnets                        = var.intra_subnet_enabled ? length(var.intra_subnet_cidrs) > 0 ? var.intra_subnet_cidrs : [for netnum in range(local.azs * 3, local.azs * 4) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
-  #public_subnets                       = var.public_subnet_enabled ? length(var.public_subnet_cidrs) > 0 ? var.public_subnet_cidrs : [for netnum in range(0, local.azs) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
-  #private_subnets                      = var.private_subnet_enabled ? length(var.private_subnet_cidrs) > 0 ? var.private_subnet_cidrs : [for netnum in range(local.azs, local.azs * 2) : cidrsubnet(var.vpc_cidr, 4, netnum)] : []
-  #database_subnets                     = var.database_subnet_enabled ? length(var.database_subnet_cidrs) > 0 ? var.database_subnet_cidrs : [for netnum in range(local.azs * 2, local.azs * 3) : cidrsubnet(var.vpc_cidr, 8, netnum)] : []
+  database_subnets                     = concat(local.database_subnets_native, flatten(local.secondary_database_subnets))
   single_nat_gateway                   = var.one_nat_gateway_per_az == true ? false : true
   create_database_subnet_route_table   = var.database_subnet_enabled
   create_flow_log_cloudwatch_log_group = var.flow_log_enabled == true ? true : false
@@ -197,7 +193,7 @@ resource "aws_vpc_ipam" "ipam" {
     region_name = local.region_name
   }
 
-  #tags = var.tags
+
 }
 
 # IPv4
@@ -209,7 +205,7 @@ resource "aws_vpc_ipam_pool" "ipam_pool" {
   locale                            = local.region_name
   allocation_default_netmask_length = 16
 
-  #tags = var.tags
+
 }
 
 resource "aws_vpc_ipam_pool_cidr" "ipam_pool_cidr" {
@@ -237,5 +233,5 @@ resource "aws_vpc_ipam_pool_cidr" "ipam_pool_cidr" {
 #   publicly_advertisable             = false
 #   aws_service                       = "ec2"
 
-#   #tags = var.tags
+#
 # }
