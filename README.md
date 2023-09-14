@@ -233,7 +233,7 @@ To configure Pritunl VPN:
 | <a name="input_public_subnet_assign_ipv6_address_on_creation"></a> [public\_subnet\_assign\_ipv6\_address\_on\_creation](#input\_public\_subnet\_assign\_ipv6\_address\_on\_creation) | Assign IPv6 address on public subnet, must be disabled to change IPv6 CIDRs. This is the IPv6 equivalent of map\_public\_ip\_on\_launch | `bool` | `null` | no |
 | <a name="input_public_subnet_cidrs"></a> [public\_subnet\_cidrs](#input\_public\_subnet\_cidrs) | A list of public subnets CIDR to be created inside the VPC | `list(any)` | `[]` | no |
 | <a name="input_public_subnet_enabled"></a> [public\_subnet\_enabled](#input\_public\_subnet\_enabled) | Set true to enable public subnets | `bool` | `false` | no |
-| <a name="input_region"></a> [region](#input\_region) | The AWS region name | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | The AWS region name | `string` | `null` | no |
 | <a name="input_secondary_cidr_blocks"></a> [secondary\_cidr\_blocks](#input\_secondary\_cidr\_blocks) | List of the secondary CIDR blocks which can be at most 5 | `list(string)` | `[]` | no |
 | <a name="input_secondry_cidr_enabled"></a> [secondry\_cidr\_enabled](#input\_secondry\_cidr\_enabled) | Whether enable secondary CIDR with VPC | `bool` | `false` | no |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | The CIDR block of the VPC | `string` | `"10.0.0.0/16"` | no |

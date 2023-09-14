@@ -255,6 +255,7 @@ variable "ipv4_netmask_length" {
 variable "region" {
   description = "The AWS region name"
   type        = string
+  default     = null
 }
 
 variable "existing_ipam_managed_cidr" {
