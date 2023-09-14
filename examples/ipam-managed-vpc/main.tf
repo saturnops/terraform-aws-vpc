@@ -20,7 +20,7 @@ module "vpc_ipam" {
   region             = local.region
   create_ipam_pool   = true
   vpc_cidr           = local.vpc_cidr
-  availability_zones = ["ap-south-1a", "ap-south-1b"]
+  availability_zones = ["us-east-1a", "us-east-1b"]
 
   private_subnet_enabled = true
   public_subnet_enabled  = true

@@ -24,9 +24,11 @@ module "vpc" {
   vpc_cidr                                        = "10.0.0.0/16"
   environment                                     = "production"
   ipv6_enabled                                    = true
+  create_ipam_pool                                = false
+  ipam_enabled                                    = false
   flow_log_enabled                                = true
   vpn_key_pair_name                               = module.key_pair_vpn.key_pair_name
-  availability_zones                              = 2
+  availability_zones                              = ["us-east-1a", "us-east-1b"]
   vpn_server_enabled                              = false
   intra_subnet_enabled                            = true
   auto_assign_public_ip                           = true
