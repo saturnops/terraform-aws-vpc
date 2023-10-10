@@ -11,7 +11,7 @@ locals {
 }
 
 module "key_pair_vpn" {
-  source             = "squareop"
+  source             = "saturnops/keypair/aws"
   key_name           = format("%s-%s-vpn", local.environment, local.name)
   environment        = local.environment
   ssm_parameter_path = format("%s-%s-vpn", local.environment, local.name)
