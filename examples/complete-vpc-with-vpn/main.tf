@@ -1,7 +1,7 @@
 locals {
   name        = "vpc"
-  region      = "us-east-1"
-  environment = "prod"
+  region      = "ap-south-1"
+  environment = "prodak"
   additional_aws_tags = {
     Owner      = "Organization_Name"
     Expires    = "Never"
@@ -25,7 +25,7 @@ module "vpc" {
   flow_log_enabled                                = false
   vpn_key_pair_name                               = module.key_pair_vpn.key_pair_name
   availability_zones                              = ["us-east-1a", "us-east-1b"]
-  vpn_server_enabled                              = false
+  vpn_server_enabled                              = true
   intra_subnet_enabled                            = true
   public_subnet_enabled                           = true
   auto_assign_public_ip                           = true

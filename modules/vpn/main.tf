@@ -194,8 +194,8 @@ resource "aws_ssm_document" "ssm_document" {
                "sleep 60",
                "PASSWORD=$(sudo pritunl default-password | grep password | awk '{ print $2 }' | tail -n1)",
                "sleep 60",
-               "vpn_host" = ${aws_eip.vpn.public_ip}
-               "aws secretsmanager create-secret --region ${data.aws_region.current.name} --name ${var.environment}-${var.name}-vpn --secret-string \"{\\\"user\\\": \\\"pritunl\\\", \\\"password\\\": $PASSWORD, \\\"setup-key\\\": \\\"$SETUPKEY\\\, \\\"vpn_host\\\": $vpn_host}\""
+               "VPN_HOST=${aws_eip.vpn.public_ip}",
+               "aws secretsmanager create-secret --region ${data.aws_region.current.name} --name ${var.environment}-${var.name}-vpnp --secret-string \"{\\\"user\\\": \\\"pritunl\\\", \\\"password\\\": $PASSWORD, \\\"setup-key\\\": \\\"$SETUPKEY\\\", \\\"vpn_host\\\": \\\"$VPN_HOST\\\"}\""
             ]
          }
       }
