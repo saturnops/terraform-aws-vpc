@@ -1,7 +1,7 @@
 locals {
   name        = "vpc"
   region      = "ap-south-1"
-  environment = "prodak"
+  environment = "prod"
   additional_aws_tags = {
     Owner      = "Organization_Name"
     Expires    = "Never"
