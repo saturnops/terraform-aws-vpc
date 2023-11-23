@@ -61,7 +61,7 @@ data "aws_ec2_instance_type" "arch" {
 
 module "vpc" {
   source                                          = "terraform-aws-modules/vpc/aws"
-  version                                         = "5.1.1"
+  version                                         = "5.2.0"
   name                                            = format("%s-%s-vpc", var.environment, var.name)
   cidr                                            = var.vpc_cidr # CIDR FOR VPC
   azs                                             = [for n in range(0, local.azs) : data.aws_availability_zones.available.names[n]]
@@ -93,6 +93,7 @@ module "vpc" {
   create_flow_log_cloudwatch_iam_role             = var.flow_log_enabled
   create_flow_log_cloudwatch_log_group            = local.create_flow_log_cloudwatch_log_group
   flow_log_max_aggregation_interval               = var.flow_log_max_aggregation_interval
+  flow_log_cloudwatch_log_group_skip_destroy      = var.flow_log_cloudwatch_log_group_skip_destroy
   flow_log_cloudwatch_log_group_retention_in_days = var.flow_log_cloudwatch_log_group_retention_in_days
   flow_log_cloudwatch_log_group_kms_key_id        = var.flow_log_cloudwatch_log_group_kms_key_arn
   enable_ipv6                                     = local.enable_ipv6
@@ -211,4 +212,109 @@ resource "aws_vpc_ipam_pool_cidr" "ipam_pool_cidr" {
   count        = var.ipam_enabled ? 1 : 0
   ipam_pool_id = var.create_ipam_pool ? aws_vpc_ipam_pool.ipam_pool[0].id : var.ipam_pool_id
   cidr         = var.create_ipam_pool ? var.vpc_cidr : var.existing_ipam_managed_cidr
+}
+
+# private links for S3
+
+data "aws_route_tables" "aws_private_routes" {
+  count      = var.vpc_s3_endpoint_enabled ? 1 : 0
+  depends_on = [module.vpc]
+  vpc_id     = module.vpc.vpc_id
+  tags = {
+    Name = "${var.environment}-${var.name}-private-route-table"
+  }
+}
+
+resource "aws_vpc_endpoint" "private-s3" {
+  count             = var.vpc_s3_endpoint_enabled ? 1 : 0
+  depends_on        = [data.aws_route_tables.aws_private_routes]
+  vpc_id            = module.vpc.vpc_id
+  service_name      = "com.amazonaws.${var.region}.s3"
+  route_table_ids   = data.aws_route_tables.aws_private_routes.ids
+  vpc_endpoint_type = "Gateway"
+  policy            = <<POLICY
+{
+    "Statement": [
+        {
+            "Action": "*",
+            "Effect": "Allow",
+            "Resource": "*",
+            "Principal": "*"
+        }
+    ]
+}
+POLICY
+  tags = {
+    Name = "${var.environment}-${var.name}-endpoint"
+  }
+}
+
+# allow 443 to access ecr repo
+resource "aws_security_group" "vpc_endpoints" {
+  count       = var.vpc_ecr_endpoint_enabled ? 1 : 0
+  name_prefix = "${var.environment}-vpc-endpoints"
+  description = "Associated to ECR/s3 VPC Endpoints"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description     = "Allow Nodes to pull images from ECR via VPC endpoints"
+    protocol        = "tcp"
+    from_port       = 443
+    to_port         = 443
+    security_groups = [module.vpc.default_security_group_id]
+  }
+}
+# private links for ECR.dkr
+
+resource "aws_vpc_endpoint" "private-ecr-dkr" {
+  count               = var.vpc_ecr_endpoint_enabled ? 1 : 0
+  depends_on          = [data.aws_route_tables.aws_private_routes]
+  vpc_id              = module.vpc.vpc_id
+  service_name        = "com.amazonaws.${var.region}.ecr.dkr"
+  subnet_ids          = module.vpc.private_subnets
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  policy              = <<POLICY
+{
+    "Statement": [
+        {
+            "Action": "*",
+            "Effect": "Allow",
+            "Resource": "*",
+            "Principal": "*"
+        }
+    ]
+}
+POLICY
+  tags = {
+    Name = "${var.environment}-${var.name}-ecr-dkr-endpoint"
+  }
+}
+
+# private links for ECR.api
+
+resource "aws_vpc_endpoint" "private-ecr-api" {
+  count               = var.vpc_ecr_endpoint_enabled ? 1 : 0
+  depends_on          = [data.aws_route_tables.aws_private_routes]
+  vpc_id              = module.vpc.vpc_id
+  subnet_ids          = module.vpc.private_subnets
+  service_name        = "com.amazonaws.${var.region}.ecr.api"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  policy              = <<POLICY
+{
+    "Statement": [
+        {
+            "Action": "ecr.api",
+            "Effect": "Allow",
+            "Resource": "*",
+            "Principal": "*"
+        }
+    ]
+}
+POLICY
+  tags = {
+    Name = "${var.environment}-${var.name}-ecr-api-endpoint"
+  }
 }

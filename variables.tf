@@ -263,3 +263,21 @@ variable "existing_ipam_managed_cidr" {
   default     = ""
   type        = string
 }
+
+variable "flow_log_cloudwatch_log_group_skip_destroy" {
+  description = " Set to true if you do not wish the log group (and any logs it may contain) to be deleted at destroy time, and instead just remove the log group from the Terraform state"
+  type        = bool
+  default     = false
+}
+
+variable "vpc_s3_endpoint_enabled" {
+  description = "Set to true if you want to enable vpc S3 endpoints"
+  type        = bool
+  default     = false
+}
+
+variable "vpc_ecr_endpoint_enabled" {
+  description = "Set to true if you want to enable vpc ecr endpoints"
+  type        = bool
+  default     = false
+}
