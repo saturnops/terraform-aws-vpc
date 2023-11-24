@@ -230,7 +230,7 @@ resource "aws_vpc_endpoint" "private-s3" {
   depends_on        = [data.aws_route_tables.aws_private_routes]
   vpc_id            = module.vpc.vpc_id
   service_name      = "com.amazonaws.${var.region}.s3"
-  route_table_ids   = data.aws_route_tables.aws_private_routes.ids
+  route_table_ids   = data.aws_route_tables.aws_private_routes[0].ids
   vpc_endpoint_type = "Gateway"
   policy            = <<POLICY
 {
@@ -257,11 +257,11 @@ resource "aws_security_group" "vpc_endpoints" {
   vpc_id      = module.vpc.vpc_id
 
   ingress {
-    description     = "Allow Nodes to pull images from ECR via VPC endpoints"
-    protocol        = "tcp"
-    from_port       = 443
-    to_port         = 443
-    security_groups = [module.vpc.default_security_group_id]
+    description = "Allow Nodes to pull images from ECR via VPC endpoints"
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    cidr_blocks = [var.vpc_cidr]
   }
 }
 # private links for ECR.dkr
@@ -272,7 +272,7 @@ resource "aws_vpc_endpoint" "private-ecr-dkr" {
   vpc_id              = module.vpc.vpc_id
   service_name        = "com.amazonaws.${var.region}.ecr.dkr"
   subnet_ids          = module.vpc.private_subnets
-  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  security_group_ids  = [aws_security_group.vpc_endpoints[0].id]
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   policy              = <<POLICY
