@@ -1,7 +1,7 @@
 locals {
-  name        = "vpcp"
+  name        = "vpc"
   region      = "ap-south-1"
-  environment = "prodd"
+  environment = "prod"
   additional_aws_tags = {
     Owner      = "Organization_Name"
     Expires    = "Never"
@@ -69,7 +69,7 @@ module "kms" {
 
 
 module "vpc" {
-  source                                          = "../../"
+  source                                          = "saturnops/vpc/aws"
   name                                            = local.name
   region                                          = local.region
   vpc_cidr                                        = local.vpc_cidr
