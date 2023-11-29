@@ -30,7 +30,7 @@ locals {
   database_subnets                     = concat(local.database_subnets_native, flatten(local.secondary_database_subnets))
   single_nat_gateway                   = var.one_nat_gateway_per_az == true ? false : true
   create_database_subnet_route_table   = var.database_subnet_enabled
-  create_flow_log_cloudwatch_log_group = var.flow_log_enabled == true ? true : false
+  create_flow_log_cloudwatch_log_group = var.flow_log_enabled == true || var.flow_log_cloudwatch_log_group_skip_destroy == true ? true : false
   is_supported_arch                    = data.aws_ec2_instance_type.arch.supported_architectures[0] == "arm64" ? false : true # for VPN Instance
   nacl_allow_vpc_access_rule = [{
     rule_no    = 97
