@@ -64,7 +64,7 @@ module "vpc" {
   version                                         = "5.2.0"
   name                                            = format("%s-%s-vpc", var.environment, var.name)
   cidr                                            = var.vpc_cidr # CIDR FOR VPC
-  azs                                             = [for n in range(0, local.azs) : data.aws_availability_zones.available.names[n]]
+  azs                                             = var.availability_zones
   use_ipam_pool                                   = var.ipam_enabled ? true : false
   ipv4_ipam_pool_id                               = var.ipam_enabled && var.create_ipam_pool ? aws_vpc_ipam_pool.ipam_pool[0].id : null
   ipv4_netmask_length                             = var.ipam_enabled ? var.ipv4_netmask_length : null
