@@ -137,6 +137,10 @@ module "vpc" {
     "kubernetes.io/role/internal-elb" = 1
   })
 
+  private_subnet_tags_per_az = { for az in var.availability_zones : az => {
+    "Karpenter"        = "${az}"
+  } }
+
   private_route_table_tags = tomap({
     "Name" = "${var.environment}-${var.name}-private-route-table"
   })
